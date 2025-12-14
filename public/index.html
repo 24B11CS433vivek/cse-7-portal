@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="toast.css">
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CSE 7 — Login</title>
+  
+  <style>
+    /* =========================================
+       1. ORIGINAL CSE 7 STYLES
+       ========================================= */
+    :root {
+      --bg: #0f1724;
+      --card: #0b1220;
+      --accent: #4ade80;
+      --muted: #9aa7bd;
+      --error: #ff6b6b;
+      
+      /* LAMP VARIABLES */
+      --cord: hsl(210, 0%, calc((40 + (var(--on, 0) * 50)) * 1%));
+      --opening: hsl(50, calc((10 + (var(--on, 0) * 80)) * 1%), calc((20 + (var(--on, 0) * 70)) * 1%));
+      --feature: #0a0a0a;
+      --tongue: #e06952;
+      --shade-hue: 210; /* Blueish hue to match CSE theme */
+      --glow-color: hsl(210, 80%, 60%);
+    }
+
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+
+
+    body {
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      color: #e6eef8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      -webkit-font-smoothing: antialiased;
+      background: #020408; /* Darker start */
+      position: relative;
+      transition: background 1s ease;
+    }
+
+
+    /* STARFIELD CANVAS */
+    #canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      z-index: 0;
+      opacity: 0.3; /* Dim stars when light is off */
+      transition: opacity 1.5s ease;
+    }
+    
+    body.lights-active #canvas {
+      opacity: 1; /* Bright stars when light is on */
+    }
+
+
+    /* MAIN LOGIN FRAME */
+    .frame {
+      width: 920px;
+      max-width: 100%;
+      background: linear-gradient(180deg, rgba(15,23,42,0.92), rgba(15,23,42,0.8));
+      backdrop-filter: blur(18px);
+      border-radius: 18px;
+      padding: 28px;
+      box-shadow: 0 18px 45px rgba(2,6,23,0.9);
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      gap: 24px;
+      align-items: center;
+      border: 1px solid rgba(148,163,184,0.16);
+      position: relative;
+      z-index: 2;
+
+
+      /* Hidden State by default */
+      opacity: 0;
+      transform: translateY(30px) scale(0.95);
+      pointer-events: none;
+      transition: opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                  transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+
+    /* Visible State when Lamp is On */
+    body.lights-active .frame {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: all;
+    }
+
+
+    /* --- REST OF ORIGINAL CSS --- */
+    .left{display:flex;flex-direction:column;gap:18px;align-items:center;justify-content:center;padding:18px;}
+    .logo-wrap{width:320px;height:180px;display:flex;align-items:center;justify-content:center;position:relative;overflow:visible;}
+    .logo{width:280px;height:160px;display:block;filter:drop-shadow(0 6px 18px rgba(5,10,30,0.6));}
+    
+    .draw path{stroke:#7dd3fc;fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1200;stroke-dashoffset:1200;animation:draw 0.9s ease-out forwards;}
+    .draw text{stroke:none;fill:#e6eef8;opacity:0;transform:translateY(6px);animation:fadeText 0.6s cubic-bezier(.16,1,.3,1) forwards 0.7s;}
+    @keyframes draw{to{stroke-dashoffset:0;}}
+    @keyframes fadeText{0%{opacity:0;transform:translateY(6px);}100%{opacity:1;transform:translateY(0);}}
+
+
+    .reveal{position:absolute;inset:0;pointer-events:none;}
+    .reveal .mask{width:0;height:100%;background:linear-gradient(90deg,rgba(255,255,255,0.02),rgba(255,255,255,0.1),rgba(255,255,255,0.02));transform-origin:left center;animation:maskReveal 0.7s cubic-bezier(.2,.9,.2,1) 0.15s forwards;border-radius:10px;}
+    @keyframes maskReveal{to{width:100%;}}
+
+
+    h1{margin:0;letter-spacing:1px;font-size:20px;color:var(--muted);text-transform:uppercase;font-weight:700;}
+    .sub{font-size:13px;color:var(--muted);text-align:center;margin-top:-6px;}
+
+
+    .card{background:linear-gradient(180deg,rgba(15,23,42,0.95),rgba(15,23,42,0.92));padding:26px;border-radius:12px;display:flex;flex-direction:column;gap:14px;box-shadow:0 12px 40px rgba(15,23,42,0.9);}
+
+
+    label{font-size:13px;color:var(--muted);display:block;margin-bottom:6px;}
+    .input-wrap{display:flex;gap:8px;align-items:center;}
+    input[type="text"]{flex:1;padding:14px 14px;font-size:15px;border-radius:10px;border:1px solid rgba(255,255,255,0.08);background:rgba(15,23,42,0.7);color:inherit;outline:none;box-shadow:inset 0 -6px 18px rgba(2,6,23,0.4);transition:transform 120ms ease,box-shadow 120ms ease,border-color 120ms,background 120ms;}
+    input[type="text"]:focus{transform:translateY(-2px);border-color:rgba(125,211,252,0.4);box-shadow:0 8px 30px rgba(7,12,30,0.9);background:radial-gradient(circle at 0 0,rgba(59,130,246,0.22),rgba(15,23,42,0.8) 60%);}
+
+
+    button{background:linear-gradient(90deg,#06b6d4,#60a5fa);color:#04121a;border:none;padding:12px 18px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 8px 30px rgba(8,12,30,0.7);transition:transform 120ms ease,filter 120ms,box-shadow 120ms ease;}
+    button:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 14px 40px rgba(8,12,30,0.9);}
+    button:active{transform:translateY(1px) scale(0.99);}
+
+
+    .muted{font-size:13px;color:var(--muted);}
+    .error{color:var(--error);font-weight:600;display:none;margin-top:8px;}
+    .shake{animation:shake 420ms cubic-bezier(.36,.07,.19,.97) both;}
+    @keyframes shake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(2px)}30%,50%,70%{transform:translateX(-4px)}40%,60%{transform:translateX(4px)}}
+
+
+    .success-msg{display:none;gap:12px;align-items:center;padding:10px 12px;border-radius:10px;background:linear-gradient(90deg,rgba(34,197,94,0.12),rgba(34,197,94,0.03));color:#134d02;font-weight:600;font-size:12px;border:1px solid rgba(74,222,128,0.24);margin-top:8px;}
+    footer.small{font-size:12px;color:var(--muted);margin-top:6px;text-align:right;}
+
+
+    .parachute-scene{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;display:none;z-index:5;}
+    .parachute-container{position:absolute;top:-120px;left:50%;transform:translateX(-50%);animation:fall-fast 1.4s ease-in,deploy-parachute 2.2s ease-out 1.4s forwards;}
+    @keyframes fall-fast{0%{top:-120px;}100%{top:30vh;}}
+    @keyframes deploy-parachute{0%{top:30vh;}100%{top:72vh;}}
+    .parachute{font-size:80px;display:none;}
+    .person{font-size:70px;transform:rotate(180deg);}
+    .parachute-container.start .person{display:none;}
+    .parachute-container.start .parachute{display:block;}
+    .ground{position:absolute;bottom:0;width:100%;height:60px;background:linear-gradient(to top,#166534,#22c55e);box-shadow:0 -6px 20px rgba(0,0,0,0.4);}
+    .success-popup{position:absolute;left:50%;transform:translateX(calc(-50% + 130px));top:30vh;padding:10px 16px;border-radius:999px;background:rgba(15,23,42,0.95);border:1px solid rgba(74,222,128,0.8);color:#bbf7d0;font-weight:700;font-size:15px;display:flex;align-items:center;gap:8px;opacity:0;animation:popupIn 0.6s cubic-bezier(.2,1,.2,1) 1.2s forwards;box-shadow:0 12px 30px rgba(22,163,74,0.65);}
+    .success-popup span.icon{font-size:20px;}
+    @keyframes popupIn{0%{transform:translateX(calc(-50% + 130px)) translateY(10px) scale(.96);opacity:0;}100%{transform:translateX(calc(-50% + 130px)) translateY(0) scale(1);opacity:1;}}
+
+
+    @media(max-width:880px){
+      body{padding:16px;}
+      .frame{grid-template-columns:1fr;padding:18px;}
+      .logo-wrap{width:240px;height:120px;}
+      .logo{height:140px;}
+      .success-popup{top:36vh;transform:translateX(-50%);}
+    }
+
+
+    /* =========================================
+       2. LAMP STYLES - REFINED FOR ELEGANCE
+       ========================================= */
+    .lamp-wrapper {
+      position: fixed;
+      top: -10px; /* Hide the very top edge */
+      right: 2%;  /* ALIGN TO RIGHT to avoid center elements */
+      width: 180px; /* Elegant, smaller size for desktop */
+      height: 250px;
+      z-index: 20;
+      pointer-events: none; /* Let clicks pass through empty spaces */
+      
+      /* Smooth Entrance Animation */
+      animation: lampSettle 1.5s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+    }
+
+
+    @keyframes lampSettle {
+      from { transform: translateY(-300px); }
+      to { transform: translateY(0); }
+    }
+
+
+    /* Mobile adjustments for the Lamp */
+    @media (max-width: 880px) {
+        .lamp-wrapper {
+            width: 110px; /* Much smaller on mobile */
+            right: 0px;   /* Stick to edge */
+            top: -5px;
+        }
+    }
+
+
+    .lamp {
+      width: 100%;
+      height: 100%;
+      overflow: visible !important;
+    }
+
+
+    .lamp__hit {
+      cursor: grab;
+      pointer-events: all; /* Only the pull ring captures clicks */
+    }
+    .lamp__hit:active { cursor: grabbing; }
+
+
+    .cord { stroke: var(--cord); }
+    .cord--rig { display: none; }
+    
+    .lamp__mouth, .lamp__light { opacity: var(--on, 0); transition: opacity 0.1s; }
+    
+    .shade__opening { fill: var(--opening); }
+    .shade__opening-shade { opacity: calc(1 - var(--on, 0)); }
+    
+    .lamp__tongue { fill: var(--tongue); }
+    .lamp__feature { fill: var(--feature); }
+    .lamp__stroke { stroke: var(--feature); }
+    .post__body { fill: hsl(210, 20%, 30%); }
+    .base__top { fill: hsl(210, 20%, 40%); }
+    .base__side { fill: hsl(210, 20%, 30%); }
+
+
+    /* Instructions to pull cord */
+    .pull-hint {
+        position: absolute;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgba(255,255,255,0.4);
+        font-size: 11px;
+        font-family: sans-serif;
+        pointer-events: none;
+        opacity: 0;
+        animation: fadeHint 3s infinite 2s; /* Start later */
+        white-space: nowrap;
+    }
+    body.lights-active .pull-hint { display: none; }
+    @keyframes fadeHint { 0%,100%{opacity:0.1} 50%{opacity:0.6} }
+
+
+  </style>
+</head>
+<body>
+
+
+  <!-- 1. Starfield Background -->
+  <canvas id="canvas" width="1365" height="945"></canvas>
+
+
+  <!-- 2. The Lamp SVG Container (Repositioned to Top Right) -->
+  <div class="lamp-wrapper">
+    <svg class="lamp" viewBox="0 0 333 484" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="opening-shade" x1="35" y1="220" x2="295" y2="220" gradientUnits="userSpaceOnUse">
+                <stop offset="0" stop-color="#000" stop-opacity="0.8"/>
+                <stop offset="1" stop-color="#000" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="light" x1="165.5" y1="218.5" x2="165.5" y2="483.5" gradientUnits="userSpaceOnUse">
+                <stop stop-color="hsl(210, 80%, 90%)" stop-opacity=".3" />
+                <stop offset="1" stop-color="hsl(210, 80%, 90%)" stop-opacity="0" />
+            </linearGradient>
+        </defs>
+
+
+        <!-- Lamp Structure -->
+        <g class="lamp__shade shade">
+            <ellipse class="shade__opening" cx="165" cy="220" rx="130" ry="20" />
+            <ellipse class="shade__opening-shade" cx="165" cy="220" rx="130" ry="20" fill="url(#opening-shade)" />
+        </g>
+        
+        <g class="lamp__base base">
+            <path class="base__side" d="M165 464c44.183 0 80-8.954 80-20v-14h-22.869c-14.519-3.703-34.752-6-57.131-6-22.379 0-42.612 2.297-57.131 6H85v14c0 11.046 35.817 20 80 20z" />
+            <ellipse class="base__top" cx="165" cy="430" rx="80" ry="20" />
+        </g>
+        
+        <g class="lamp__post post">
+            <path class="post__body" d="M180 142h-30v286c0 3.866 6.716 7 15 7 8.284 0 15-3.134 15-7V142z" />
+        </g>
+        
+        <!-- Cords for Animation -->
+        <g class="lamp__cords cords">
+            <path class="cord cord--rig" d="M124 187.033V347" stroke-width="6" stroke-linecap="round" />
+            <path class="cord cord--rig" d="M124 187.023s17.007 21.921 17.007 34.846c0 12.925-11.338 23.231-17.007 34.846-5.669 11.615-17.007 21.921-17.007 34.846 0 12.925 17.007 34.846 17.007 34.846" stroke-width="6" stroke-linecap="round" />
+            <path class="cord cord--rig" d="M124 187.017s-21.259 17.932-21.259 30.26c0 12.327 14.173 20.173 21.259 30.26 7.086 10.086 21.259 17.933 21.259 30.26 0 12.327-21.259 30.26-21.259 30.26" stroke-width="6" stroke-linecap="round" />
+            <path class="cord cord--rig" d="M124 187s29.763 8.644 29.763 20.735-19.842 13.823-29.763 20.734c-9.921 6.912-29.763 8.644-29.763 20.735S124 269.939 124 269.939" stroke-width="6" stroke-linecap="round" />
+            <line class="cord cord--dummy" x1="124" y2="348" x2="124" y1="190" stroke-width="6" stroke-linecap="round" />
+        </g>
+        
+        <!-- Light Beam -->
+        <path class="lamp__light" d="M290.5 193H39L0 463.5c0 11.046 75.478 20 165.5 20s167-11.954 167-23l-42-267.5z" fill="url(#light)" pointer-events="none"/>
+        
+        <g class="lamp__top top">
+            <path class="top__body" fill="#334155" d="M164.859 0c55.229 0 100 8.954 100 20l29.859 199.06C291.529 208.451 234.609 200 164.859 200S38.189 208.451 35 219.06L64.859 20c0-11.046 44.772-20 100-20z" />
+        </g>
+        
+        <!-- Face -->
+        <g class="lamp__face face">
+            <g class="lamp__mouth">
+                <path d="M165 178c19.882 0 36-16.118 36-36h-72c0 19.882 16.118 36 36 36z" fill="#141414" />
+                <clipPath id="mouth" x="129" y="142" width="72" height="36">
+                    <path d="M165 178c19.882 0 36-16.118 36-36h-72c0 19.882 16.118 36 36 36z" fill="#141414" />
+                </clipPath>
+                <g clip-path="url(#mouth)">
+                    <circle class="lamp__tongue" cx="179.4" cy="172.6" r="18" />
+                </g>
+            </g>
+            <g class="lamp__eyes">
+                <path class="lamp__eye lamp__stroke" d="M115 135c0-5.523-5.82-10-13-10s-13 4.477-13 10" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                <path class="lamp__eye lamp__stroke" d="M241 135c0-5.523-5.82-10-13-10s-13 4.477-13 10" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+        </g>
+        
+        <!-- Hit Area for Dragging -->
+        <circle class="lamp__hit" cx="124" cy="347" r="40" fill="transparent" />
+    </svg>
+    <div class="pull-hint">Pull me</div>
+  </div>
+
+
+
+  <!-- 3. Original Login Frame -->
+  <div class="frame" role="main" aria-label="CSE 7 login page">
+    <div class="left">
+      <div class="logo-wrap" aria-hidden="true">
+      <svg class="logo" viewBox="0 0 600 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CSE 7 logo">
+ <defs>
+  <lineargradient id="cardGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+    <stop offset="0%" stop-color="#0f172a"></stop>
+    <stop offset="100%" stop-color="#020617"></stop>
+  </lineargradient>
+  <lineargradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#22d3ee"></stop>
+    <stop offset="50%" stop-color="#60a5fa"></stop>
+    <stop offset="100%" stop-color="#a855f7"></stop>
+  </lineargradient>
+  <lineargradient id="textGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#e0f2fe"></stop>
+    <stop offset="50%" stop-color="#7dd3fc"></stop>
+    <stop offset="100%" stop-color="#a5b4fc"></stop>
+  </lineargradient>
+  <lineargradient id="roomGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+    <stop offset="0%" stop-color="#10b981"></stop>
+    <stop offset="50%" stop-color="#34d399"></stop>
+    <stop offset="100%" stop-color="#6ee7b7"></stop>
+  </lineargradient>
+  <filter id="softGlow" x="-40%" y="-40%" width="180%" height="180%">
+    <fegaussianblur stdDeviation="12" result="blur"></fegaussianblur>
+    <fecolormatrix in="blur" type="matrix" values="0 0 0 0 0.2 0 0 0 0 0.7 0 0 0 0 1 0 0 0 0.7 0"></fecolormatrix>
+  </filter>
+  <pattern id="grid" x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+    <path d="M 12 0 L 0 0 0 12" fill="none" stroke="rgba(148,163,184,0.18)" stroke-width="0.4"></path>
+  </pattern>
+ </defs>
+ <rect x="25" y="15" rx="28" ry="28" width="550" height="270" fill="none" stroke="url(#borderGrad)" stroke-width="2.8" opacity="0.9"></rect>
+ <rect x="25" y="15" rx="28" ry="28" width="550" height="270" fill="none" stroke="#38bdf8" stroke-width="1.2" opacity="0.4" filter="url(#softGlow)"></rect>
+ <rect x="40" y="30" rx="22" ry="22" width="520" height="240" fill="url(#cardGrad)" stroke="rgba(148,163,184,0.35)" stroke-width="0.8"></rect>
+ <rect x="40" y="30" rx="22" ry="22" width="520" height="240" fill="url(#grid)" opacity="0.4"></rect>
+ <g transform="translate(60,50)">
+  <rect x="0" y="0" rx="18" ry="18" width="260" height="170" fill="rgba(15,23,42,0.9)" stroke="rgba(148,163,184,0.5)" stroke-width="0.8"></rect>
+  <path d="M20 20 H80" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"></path>
+  <path d="M20 20 V60" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"></path>
+  <path d="M240 150 H200" stroke="#22c55e" stroke-width="2" stroke-linecap="round"></path>
+  <path d="M240 150 V110" stroke="#22c55e" stroke-width="2" stroke-linecap="round"></path>
+  <text x="130" y="90" font-family="Inter,Arial" font-size="60" font-weight="800" fill="url(#textGrad)" letter-spacing="2" text-anchor="middle">CSE7</text>
+  <path d="M 70 130 Q 150 155 230 130" fill="none" stroke="#38bdf8" stroke-width="3" stroke-linecap="round" stroke-dasharray="180" stroke-dashoffset="180">
+    <animate attributeName="stroke-dashoffset" from="180" to="0" dur="0.8s" begin="0.4s" fill="freeze" repeatCount="1"></animate>
+    <animate attributeName="opacity" from="0" to="1" dur="0.3s" begin="0.4s" fill="freeze"></animate>
+  </path>
+  <text x="130" y="42" font-family="Inter,Arial" font-size="13" fill="#9ca3af" letter-spacing="2" text-anchor="middle">SECTION • 2024–25</text>
+  <g transform="translate(0,25)">
+    <rect x="65" y="135" rx="12" ry="12" width="170" height="28" fill="rgba(16,185,129,0.15)" stroke="url(#roomGrad)" stroke-width="1.2"></rect>
+    <text x="145" y="153" font-family="Inter,Arial" font-size="14" font-weight="700" fill="url(#roomGrad)" letter-spacing="1" text-anchor="middle">4th Sem • Room 308</text>
+  </g>
+ </g>
+ <g transform="translate(360,115)">
+  <text x="0" y="0" font-family="Inter,Arial" font-size="14" fill="#9aa7bd" letter-spacing="2">OFFICIAL DASHBOARD</text>
+  <text x="0" y="30" font-family="Inter,Arial" font-size="20" fill="#e5e7eb" font-weight="700">Class Representative</text>
+  <rect x="0" y="52" rx="999" ry="999" width="130" height="26" fill="rgba(15,23,42,0.9)" stroke="#38bdf8" stroke-width="0.8"></rect>
+  <text x="14" y="70" font-family="Inter,Arial" font-size="12" fill="#bae6fd">CSE 7 • 2024 Batch</text>
+  <rect x="9" y="93" rx="999" ry="999" width="120" height="26" fill="rgba(15,23,42,0.9)" stroke="#22c55e" stroke-width="0.8"></rect>
+  <text x="14" y="110" font-family="Inter,Arial" font-size="12" fill="#bbf7d0">Computer Science</text>
+ </g>
+</svg>
+        <div class="reveal" aria-hidden="true">
+          <div class="mask"></div>
+        </div>
+      </div>
+      <h1>CSE 7 Only</h1>
+      <div class="sub">Welcome — sign in with your roll number</div>
+    </div>
+
+
+    <div class="card" aria-live="polite">
+      <div style="display:flex; align-items:center; justify-content:space-between;">
+        <div style="display:flex; flex-direction:column;">
+        <div style="font-size:13px; color:var(--muted)">Enter your roll number</div>
+        <div style="font-weight:800; font-size:18px; color:#dff7ff">Login</div>
+        </div>
+        <div class="muted">Only CSE7 students allowed</div>
+      </div>
+
+
+      <div>
+        <label for="roll">Roll number</label>
+        <div class="input-wrap">
+          <input id="roll" type="text" placeholder="e.g. 24b11cs261" autocomplete="off">
+          <button id="goBtn" type="button">Enter</button>
+        </div>
+        <div id="err" class="error" role="alert">Invalid roll number — try again.</div>
+        <div id="success" class="success-msg">
+          ✅ Verified — landing you into CSE 7…
+        </div>
+      </div>
+
+
+      <div class="muted" style="margin-top:6px;">
+        Tip: Hit Enter after typing. Login is not case-sensitive.
+      </div>
+      <footer class="small">Made for CSE 7 — login demo</footer>
+    </div>
+  </div>
+
+
+  <!-- Parachute success scene -->
+  <div class="parachute-scene" id="parachuteScene">
+    <div class="parachute-container" id="parachuteContainer">
+      <div class="person">🧍</div>
+      <div class="parachute">🪂</div>
+    </div>
+    <div class="success-popup" id="successPopup">
+      <span class="icon">✨</span>
+      <span>CSE 7 access granted!</span>
+    </div>
+    <div class="ground"></div>
+  </div>
+
+
+<!-- SCRIPTS -->
+<script src="https://unpkg.co/gsap@3/dist/gsap.min.js"></script>
+<script src="https://unpkg.com/gsap@3/dist/Draggable.min.js"></script>
+<script src="https://assets.codepen.io/16327/MorphSVGPlugin3.min.js"></script>
+
+
+<script>
+  // List of Allowed Rolls (Declared top for accessibility in lamp logic)
+  const allowed = [
+"24B11CS261","24B11CS266","24B11CS270","24B11CS281","24B11CS282","24B11CS285","24B11CS290","24B11CS291","24B11CS294","24B11CS296","24B11CS297","24B11CS304","24B11CS322","24B11CS327","24B11CS328","24B11CS340","24B11CS345","24B11CS346","24B11CS349","24B11CS351","24B11CS357","24B11CS358","24B11CS361","24B11CS362","24B11CS363","24B11CS367","24B11CS368","24B11CS369","24B11CS370","24B11CS372","24B11CS373","24B11CS378","24B11CS380","24B11CS382","24B11CS383","24B11CS384","24B11CS386","24B11CS391","24B11CS394","24B11CS399","24B11CS400","24B11CS401","24B11CS402","24B11CS403","24B11CS417","24B11CS421","24B11CS422","24B11CS427","24B11CS430","24B11CS433","24B11CS438","24B11CS440","24B11CS442","24B11CS444","24B11CS453","24B11CS456","24B11CS457","24B11CS459","24B11CS464","24B11CS465","24B11CS470","24B11CS471","24B11CS472","24B11CS474","24B11CS476","24B11CS483","24B11CS484","24B11CS486","24B11CS489","24B11CS492","25B61CS001"
+  ].map(r => r.toUpperCase());
+
+  // ===== 1. STARFIELD BACKGROUND =====
+  (function(){
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
+    const hue = 217;
+    const stars = [];
+    let count = 0;
+    const maxStars = 1400;
+
+
+    const canvas2 = document.createElement('canvas');
+    const ctx2 = canvas2.getContext('2d');
+    canvas2.width = 100;
+    canvas2.height = 100;
+    const half = canvas2.width/2;
+    const gradient2 = ctx2.createRadialGradient(half, half, 0, half, half, half);
+    gradient2.addColorStop(0.025, '#fff');
+    gradient2.addColorStop(0.1, 'hsl(' + hue + ', 61%, 33%)');
+    gradient2.addColorStop(0.25, 'hsl(' + hue + ', 64%, 6%)');
+    gradient2.addColorStop(1, 'transparent');
+    ctx2.fillStyle = gradient2;
+    ctx2.beginPath();
+    ctx2.arc(half, half, half, 0, Math.PI * 2);
+    ctx2.fill();
+
+
+    function random(min, max) {
+      if (arguments.length < 2) { max = min; min = 0; }
+      if (min > max) { const hold = max; max = min; min = hold; }
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+    function maxOrbit(x,y) {
+      const max = Math.max(x,y);
+      const diameter = Math.round(Math.sqrt(max*max + max*max));
+      return diameter/2;
+    }
+    function Star() {
+      this.orbitRadius = random(maxOrbit(w,h));
+      this.radius = random(60, this.orbitRadius) / 12;
+      this.orbitX = w / 2;
+      this.orbitY = h / 2;
+      this.timePassed = random(0, maxStars);
+      this.speed = random(this.orbitRadius) / 50000;
+      this.alpha = random(2, 10) / 10;
+      count++;
+      stars[count] = this;
+    }
+    Star.prototype.draw = function() {
+      const x = Math.sin(this.timePassed) * this.orbitRadius + this.orbitX;
+      const y = Math.cos(this.timePassed) * this.orbitRadius + this.orbitY;
+      const twinkle = random(10);
+      if (twinkle === 1 && this.alpha > 0) { this.alpha -= 0.05; }
+      else if (twinkle === 2 && this.alpha < 1) { this.alpha += 0.05; }
+      ctx.globalAlpha = this.alpha;
+      ctx.drawImage(canvas2, x - this.radius / 2, y - this.radius / 2, this.radius, this.radius);
+      this.timePassed += this.speed;
+    };
+    for (let i = 0; i < maxStars; i++) { new Star(); }
+    function animation() {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 0.8;
+      ctx.fillStyle = 'hsla(' + hue + ', 64%, 6%, 1)';
+      ctx.fillRect(0, 0, w, h);
+      ctx.globalCompositeOperation = 'lighter';
+      for (let i = 1, l = stars.length; i < l; i++) { stars[i].draw(); }
+      window.requestAnimationFrame(animation);
+    }
+    animation();
+    window.addEventListener('resize', () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    });
+  })();
+
+
+  // ===== 2. LAMP ANIMATION LOGIC (GSAP) & AUTO LOGIN CHECK =====
+  gsap.registerPlugin(MorphSVGPlugin, Draggable);
+
+
+  const HIT = document.querySelector(".lamp__hit");
+  const DUMMY_CORD = document.querySelector(".cord--dummy");
+  const PROXY = document.createElement("div");
+  const CORDS = gsap.utils.toArray(".cords .cord--rig");
+  const ENDX = DUMMY_CORD.getAttribute("x2");
+  const ENDY = DUMMY_CORD.getAttribute("y2");
+  
+  let startX, startY;
+  // STATE: Initially OFF (false)
+  const STATE = { ON: false };
+
+
+  const RESET = () => {
+      gsap.set(PROXY, { x: ENDX, y: ENDY });
+  };
+  RESET();
+
+
+  gsap.set(".lamp__eye", {
+      rotate: 180,
+      transformOrigin: "50% 50%",
+      yPercent: 50,
+  });
+
+
+  const CORD_TL = gsap.timeline({
+      paused: true,
+      onStart: () => {
+          // Toggle State
+          STATE.ON = !STATE.ON;
+          gsap.set(document.documentElement, { "--on": STATE.ON ? 1 : 0 });
+          gsap.set(".lamp__eye", { rotate: STATE.ON ? 0 : 180 });
+
+
+          // HIDE/SHOW LOGIN FRAME BASED ON STATE
+          if (STATE.ON) {
+            document.body.classList.add('lights-active');
+            
+            // --- NEW FEATURE: CHECK LOGIN ON PULL ---
+            let alreadyLoggedIn = false;
+            try {
+                const existing = localStorage.getItem('cse7_logged_in');
+                if (existing && allowed.includes(existing)) {
+                    alreadyLoggedIn = true;
+                    
+                    // User found! Modify UI before it fades in completely
+                    // Hide the input form
+                    document.querySelector('.input-wrap').style.display = 'none';
+                    document.querySelector('label[for="roll"]').style.display = 'none';
+                    // Change text to welcome back
+                    document.querySelector('.sub').innerText = "Welcome back, student!";
+                    document.querySelector('.muted').style.display = 'none';
+                    
+                    // Show success message immediately
+                    const succ = document.getElementById('success');
+                    succ.style.display = 'flex';
+                    succ.innerHTML = '✅ Credentials verified — welcome back!';
+
+                    // Trigger Parachute & Redirect without asking input
+                    startParachuteSequence();
+                    setTimeout(() => {
+                        window.location.href = 'main.html?roll=' + encodeURIComponent(existing);
+                    }, 3000);
+                }
+            } catch(e) {}
+
+            // If NOT already logged in, focus the input as usual
+            if (!alreadyLoggedIn) {
+                // Restore input visibility if it was hidden in a previous session check (edge case)
+                document.querySelector('.input-wrap').style.display = 'flex';
+                document.querySelector('label[for="roll"]').style.display = 'block';
+                setTimeout(() => document.getElementById('roll').focus(), 800);
+            }
+
+          } else {
+            document.body.classList.remove('lights-active');
+          }
+
+
+          gsap.set([DUMMY_CORD, HIT], { display: "none" });
+          gsap.set(CORDS[0], { display: "block" });
+      },
+      onComplete: () => {
+          gsap.set([DUMMY_CORD, HIT], { display: "block" });
+          gsap.set(CORDS[0], { display: "none" });
+          RESET();
+      },
+  });
+
+
+  // Create morph animation for the cord wiggling
+  for (let i = 1; i < CORDS.length; i++) {
+      CORD_TL.add(
+          gsap.to(CORDS[0], {
+              morphSVG: CORDS[i],
+              duration: 0.1,
+              repeat: 1,
+              yoyo: true,
+          })
+      );
+  }
+
+
+  // Draggable Physics for the cord
+  Draggable.create(PROXY, {
+      trigger: HIT,
+      type: "x,y",
+      onPress: (e) => {
+          startX = e.x;
+          startY = e.y;
+      },
+      onDrag: function () {
+          gsap.set(DUMMY_CORD, {
+              attr: {
+                  x2: this.x,
+                  y2: Math.max(300, this.y), 
+              },
+          });
+      },
+      onRelease: function (e) {
+          const DISTX = Math.abs(e.x - startX);
+          const DISTY = Math.abs(e.y - startY);
+          const TRAVELLED = Math.sqrt(DISTX * DISTX + DISTY * DISTY);
+          
+          gsap.to(DUMMY_CORD, {
+              attr: { x2: ENDX, y2: ENDY },
+              duration: 0.5,
+              ease: "elastic.out(1, 0.3)",
+              onComplete: () => {
+                  // Only toggle if pulled far enough
+                  if (TRAVELLED > 50) {
+                      CORD_TL.restart();
+                  } else {
+                      RESET();
+                  }
+              },
+          });
+      },
+  });
+
+
+  gsap.set(".lamp", { display: "block" });
+
+
+
+  // ===== 3. LOGIN VALIDATION LOGIC (MANUAL ENTRY) =====
+  
+  const rollInput = document.getElementById('roll');
+  const goBtn = document.getElementById('goBtn');
+  const err = document.getElementById('err');
+  const success = document.getElementById('success');
+  const parachuteScene = document.getElementById('parachuteScene');
+  const parachuteContainer = document.getElementById('parachuteContainer');
+
+
+  function showError(message){
+    err.textContent = message;
+    err.style.display = 'block';
+    rollInput.classList.add('shake');
+    setTimeout(()=> rollInput.classList.remove('shake'),420);
+  }
+  function clearError(){ err.style.display = 'none'; }
+
+
+  function startParachuteSequence(){
+    parachuteScene.style.display = 'block';
+    setTimeout(()=>{
+      parachuteContainer.classList.add('start');
+    }, 1400);
+  }
+
+
+  function verifyAndProceed(){
+    const val = rollInput.value.trim();
+    clearError();
+    if(!val){ showError('Please enter your roll number.'); return; }
+    
+    const upperVal = val.toUpperCase();
+    if(allowed.includes(upperVal)){
+      success.style.display = 'flex';
+      try{ localStorage.setItem('cse7_logged_in', upperVal); }catch(e){}
+      startParachuteSequence();
+      setTimeout(()=>{
+        window.location.href = 'main.html?roll=' + encodeURIComponent(upperVal);
+      }, 3600);
+    }else{
+      showError('Invalid roll number — access denied.');
+    }
+  }
+  goBtn.addEventListener('click', verifyAndProceed);
+  rollInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') verifyAndProceed(); });
+</script>
+<script src="toast.js"></script>
+
+</body>
+</html>

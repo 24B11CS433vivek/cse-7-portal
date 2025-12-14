@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="toast.css">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coding lab</title>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+    body {
+        font-family: "Poppins", sans-serif;
+        background: #f7faff;
+        margin: 0;
+        padding: 0;
+    }
+
+    header {
+        text-align: center;
+        padding: 25px;
+        background: linear-gradient(to right, #4f8cff, #6dc9ff);
+        color: #fff;
+        border-radius: 0 0 20px 20px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+    }
+
+    .container {
+        width: 90%;
+        max-width: 950px;
+        margin: auto;
+        padding: 20px 0;
+    }
+
+    .week-card {
+        background: #ffffff;
+        margin: 15px 0;
+        padding: 18px 20px;
+        border-radius: 18px;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        cursor: pointer;
+        transition: transform .2s ease;
+        border-left: 6px solid #4f8cff;
+    }
+
+    .week-card:hover {
+        transform: scale(1.01);
+    }
+
+    .week-title {
+        font-size: 20px;
+        font-weight: 600;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .week-content {
+        display: none;
+        margin-top: 12px;
+        padding-left: 10px;
+        animation: fade .3s ease;
+    }
+
+    @keyframes fade {
+        from {opacity: 0;}
+        to {opacity: 1;}
+    }
+
+    ul {
+        margin: 0;
+        padding-left: 20px;
+        line-height: 1.7;
+    }
+
+    a {
+        color: #0057d9;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+    .toggle-icon {
+        font-size: 22px;
+        font-weight: bold;
+        color: #4f8cff;
+    }
+</style>
+
+</head>
+<body>
+
+<header>
+    <h1>CSE IV-Sem Technical Training Plan</h1>
+    <p>Week-wise Concepts • Coding • Assignments • Problem Links</p>
+</header>
+
+<div class="container">
+
+<!-- ================= WEEK 1 ================= -->
+<div class="week-card" onclick="toggleWeek('w1')">
+    <div class="week-title">
+        Week 1 – Introduction to Online Coding Platforms
+        <span id="icon-w1" class="toggle-icon">+</span>
+    </div>
+    <div class="week-content" id="w1">
+        <ul>
+            <li>Register on HackerRank, LeetCode, CodeChef, GFG + GitHub upload demo</li>
+            <li><b>Problems:</b></li>
+            <li><a target="_blank" href="https://leetcode.com/problems/valid-parentheses/">Valid Parentheses (LeetCode)</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/small-triangles-large-triangles/problem">Small Triangles, Large Triangles (HackerRank)</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- ================= WEEK 2 ================= -->
+<div class="week-card" onclick="toggleWeek('w2')">
+    <div class="week-title">
+        Week 2 – Problems on C
+        <span id="icon-w2" class="toggle-icon">+</span>
+    </div>
+    <div class="week-content" id="w2">
+        <ul>
+            <li><a target="_blank" href="https://www.codechef.com/practice/course/basic-programming-concepts/DIFF500/problems/TAXSAVING">Saving Taxes (CodeChef)</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/permutations-of-strings/problem">Permutations of Strings (HackerRank)</a></li>
+            <li><a target="_blank" href="https://www.codechef.com/practice/course/c/LPCAS11/problems/LCAS109">Even Sum (CodeChef)</a></li>
+            <li><a target="_blank" href="https://www.codechef.com/practice/course/c/PCL05/problems/GDTURN">Good Turn (CodeChef)</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- ================= WEEK 3 ================= -->
+<div class="week-card" onclick="toggleWeek('w3')">
+    <div class="week-title">
+        Week 3 – Python Control Structures
+        <span id="icon-w3" class="toggle-icon">+</span>
+    </div>
+    <div class="week-content" id="w3">
+        <ul>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/python-loops/problem">Python Loops</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/python-lists/problem">Python Lists</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/python-string-split-and-join/problem">String Split and Join</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/list-comprehensions/problem">List Comprehensions</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- ================= WEEK 4 ================= -->
+<div class="week-card" onclick="toggleWeek('w4')">
+    <div class="week-title">
+        Week 4 – Python Strings
+        <span id="icon-w4" class="toggle-icon">+</span>
+    </div>
+    <div class="week-content" id="w4">
+        <ul>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/capitalize/problem">Capitalize</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/word-order/problem">Word Order</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/python-time-delta/problem">Time Delta</a></li>
+            <li><a target="_blank" href="https://leetcode.com/problems/combination-sum/">Combination Sum (LeetCode)</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- ================= WEEK 5 ================= -->
+<div class="week-card" onclick="toggleWeek('w5')">
+    <div class="week-title">
+        Week 5 – Python Data Structures
+        <span id="icon-w5" class="toggle-icon">+</span>
+    </div>
+    <div class="week-content" id="w5">
+        <ul>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/compress-the-string/problem">Compress the String</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/most-commons/problem">Company Logo</a></li>
+            <li><a target="_blank" href="https://www.codechef.com/practice/course/basic-programming-concepts/DIFF500/problems/PUZHUNT">Puzzle Hunt</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/triangle-quest-2/problem">Triangle Quest 2</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- ================= WEEK 6 ================= -->
+<div class="week-card" onclick="toggleWeek('w6')">
+    <div class="week-title">
+        Week 6 – Python Regex
+        <span id="icon-w6" class="toggle-icon">+</span>
+    </div>
+    <div class="week-content" id="w6">
+        <ul>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/validate-list-of-email-address-with-filter/problem">Validating Email Addresses</a></li>
+            <li><a target="_blank" href="https://www.codechef.com/practice/course/2-star-difficulty-problems/DIFF1500/problems/MTYFRI">Mighty Friend</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/re-sub-regex-substitution/problem">Regex Substitution</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/default-arguments/problem">Default Arguments</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- ================= WEEK 7 ================= -->
+<div class="week-card" onclick="toggleWeek('w7')">
+    <div class="week-title">
+        Week 7 – Java I/O & Datatypes
+        <span id="icon-w7" class="toggle-icon">+</span>
+    </div>
+    <div class="week-content" id="w7">
+        <ul>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-stdin-stdout/problem">Java Stdin/Stdout</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-if-else/problem">Java If-Else</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-output-formatting/problem">Java Output Formatting</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-datatypes/problem">Java Datatypes</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- ================= WEEK 8 ================= -->
+<div class="week-card" onclick="toggleWeek('w8')">
+    <div class="week-title">
+        Week 8 – Java Loops & Arrays
+        <span id="icon-w8" class="toggle-icon">+</span>
+    </div>
+    <div class="week-content" id="w8">
+        <ul>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-loops/problem">Java Loops</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-1d-array-introduction/problem">Java 1D Array</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-negative-subarray/problem">Java Subarray</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/prime-checker/problem">Prime Checker</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- ================= WEEK 9 ================= -->
+<div class="week-card" onclick="toggleWeek('w9')">
+    <div class="week-title">
+        Week 9 – Java Strings
+        <span id="icon-w9" class="toggle-icon">+</span>
+    </div>
+    <div class="week-content" id="w9">
+        <ul>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-substring/problem">Java Substring</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-string-reverse/problem">Java String Reverse</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/can-you-access/problem">Can You Access?</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-string-tokens/problem">Java String Tokens</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- ================= WEEK 10 ================= -->
+<div class="week-card" onclick="toggleWeek('w10')">
+    <div class="week-title">
+        Week 10 – Java Inheritance & Interfaces
+        <span id="icon-w10" class="toggle-icon">+</span>
+    </div>
+    <div class="week-content" id="w10">
+        <ul>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-inheritance-1/problem">Java Inheritance I</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-inheritance-2/problem">Java Inheritance II</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-abstract-class/problem">Java Abstract Class</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-interface/problem">Java Interface</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- ================= WEEK 11 ================= -->
+<div class="week-card" onclick="toggleWeek('w11')">
+    <div class="week-title">
+        Week 11 – Java Polymorphism & Exceptions
+        <span id="icon-w11" class="toggle-icon">+</span>
+    </div>
+    <div class="week-content" id="w11">
+        <ul>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-method-overriding-2-super-keyword/problem">Java Method Overriding II</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-exception-handling/problem">Java Exception Handling</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-exception-handling-try-catch/problem">Java Try-Catch</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/valid-username-checker/problem">Valid Username</a></li>
+        </ul>
+    </div>
+</div>
+
+<!-- ================= WEEK 12 ================= -->
+<div class="week-card" onclick="toggleWeek('w12')">
+    <div class="week-title">
+        Week 12 – Java Collections Framework
+        <span id="icon-w12" class="toggle-icon">+</span>
+    </div>
+    <div class="week-content" id="w12">
+        <ul>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-stack/problem">Java Stack</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-hashset/problem">Java HashSet</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/java-list/problem">Java List</a></li>
+            <li><a target="_blank" href="https://www.hackerrank.com/challenges/phone-book/problem">Java Map</a></li>
+        </ul>
+    </div>
+</div>
+
+</div>
+
+<script>
+function toggleWeek(id) {
+    const content = document.getElementById(id);
+    const icon = document.getElementById("icon-" + id);
+
+    if (content.style.display === "block") {
+        content.style.display = "none";
+        icon.innerHTML = "+";
+    } else {
+        content.style.display = "block";
+        icon.innerHTML = "-";
+    }
+}
+</script>
+<script src="toast.js"></script>
+
+</body>
+</html>

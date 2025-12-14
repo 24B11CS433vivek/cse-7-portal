@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="toast.css">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aditya University Portal</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #cce7ff, #e6d9ff);
+    font-family: 'Poppins', sans-serif;
+    overflow: hidden;
+}
+
+/* MAIN FRAME */
+.container {
+    position: relative;
+    width: 90%;
+    max-width: 1200px;
+    height: 80vh;
+    border: 12px solid #004aad;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+    cursor: pointer;
+}
+
+/* SKY */
+.sky {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, #5dbbff 0%, #bfe9ff 65%);
+    z-index: 1;
+}
+
+/* SUN */
+.sun {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #ffeb3b, #f9a825);
+    border-radius: 50%;
+    top: 60px;
+    left: -150px;
+    animation: sunMove 40s linear infinite;
+}
+@keyframes sunMove {
+    from { transform: translateX(0); }
+    to { transform: translateX(1400px); }
+}
+
+/* CLOUDS (PARALLAX) */
+.cloud {
+    position: absolute;
+    background: white;
+    border-radius: 50px;
+    opacity: 0.9;
+}
+.cloud::before,
+.cloud::after {
+    content: "";
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+}
+.cloud::before { width: 60%; height: 60%; top: -20px; left: 15px; }
+.cloud::after  { width: 50%; height: 50%; top: -10px; right: 15px; }
+
+.cloud1 { width: 220px; height: 75px; top: 90px; animation: cloudSlow 90s linear infinite; }
+.cloud2 { width: 180px; height: 60px; top: 160px; animation: cloudMid 60s linear infinite; }
+.cloud3 { width: 140px; height: 50px; top: 230px; animation: cloudFast 40s linear infinite; }
+
+@keyframes cloudSlow { from { left: -300px; } to { left: 1400px; } }
+@keyframes cloudMid  { from { left: -250px; } to { left: 1400px; } }
+@keyframes cloudFast { from { left: -200px; } to { left: 1400px; } }
+
+/* BIRDS */
+.bird {
+    position: absolute;
+    top: 130px;
+    width: 30px;
+    height: 15px;
+    border: 3px solid #333;
+    border-color: #333 transparent transparent transparent;
+    border-radius: 50%;
+    animation: birdFly 14s linear infinite;
+}
+@keyframes birdFly {
+    from { left: -60px; }
+    to { left: 1400px; }
+}
+
+/* MOUNTAINS (LAYERED) */
+.mountains {
+    position: absolute;
+    bottom: 25%;
+    width: 100%;
+    height: 35%;
+    z-index: 2;
+}
+
+.mountain {
+    position: absolute;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 300px solid transparent;
+    border-right: 300px solid transparent;
+    border-bottom: 260px solid;
+}
+
+.m1 { left: -100px; border-bottom-color: #546e7a; }
+.m2 { left: 200px; border-bottom-color: #455a64; }
+.m3 { left: 520px; border-bottom-color: #37474f; }
+.m4 { left: 840px; border-bottom-color: #263238; }
+
+/* GRASS */
+.grass {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 30%;
+    background: linear-gradient(to top, #1b5e20, #66bb6a);
+    z-index: 3;
+}
+
+/* TREES */
+
+@keyframes sway {
+    0%,100% { transform: rotate(0deg); }
+    50% { transform: rotate(2deg); }
+}
+
+/* OVERLAY IMAGE (TOP LAYER) */
+.overlay {
+    position: absolute;
+    inset: 0;
+    background: url("aditya.png") no-repeat center;
+    background-size: cover;
+    z-index: 6;
+    pointer-events: none;
+    border-radius: 20px;
+    opacity: 0.9;
+}
+
+/* BUTTON */
+.open-btn {
+    position: absolute;
+    bottom: 25px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 14px 30px;
+    font-size: 18px;
+    background: #004aad;
+    color: #fff;
+    border-radius: 10px;
+    z-index: 7;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" onclick="window.open('https://adityauniversity.in/', '_blank')">
+
+    <div class="sky">
+        <div class="sun"></div>
+        <div class="cloud cloud1"></div>
+        <div class="cloud cloud2"></div>
+        <div class="cloud cloud3"></div>
+        <div class="bird"></div>
+    </div>
+
+    <div class="mountains">
+        <div class="mountain m1"></div>
+        <div class="mountain m2"></div>
+        <div class="mountain m3"></div>
+        <div class="mountain m4"></div>
+    </div>
+
+    <div class="grass"></div>
+
+    
+
+    <div class="overlay"></div>
+    <div class="open-btn">Open Aditya University</div>
+
+</div>
+<script src="toast.js"></script>
+
+
+</body>
+</html>

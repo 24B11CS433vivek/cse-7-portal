@@ -1,0 +1,26 @@
+{
+  "name": "cse-7",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "body-parser": "^2.2.1",
+    "cors": "^2.8.5",
+    "express": "^5.2.1",
+    "fs-extra": "^11.3.2",
+    "googleapis": "^168.0.0",
+    "helmet": "^8.1.0",
+    "mime-types": "^3.0.2",
+    "morgan": "^1.10.1",
+    "multer": "^2.0.2",
+    "streamifier": "^0.1.1"
+  }
+}

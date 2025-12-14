@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="toast.css">
+
+<meta charset="utf-8" />
+<title>Time - table</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<style>
+/* ========== CUSTOMIZABLE CSS VARS ========== */
+:root{
+  --bg: #0a0a0a;
+
+  /* printer placement */
+  --printer-x: 50%;
+  --printer-y: 1cm;
+
+  /* paper visual size (px) */
+  --paper-width-px: 475px;
+  --paper-height-px: 670px;
+
+  /* timings */
+  --fall-duration: 700ms;
+  --fall-easing: cubic-bezier(.2,.9,.3,1);
+  --print-duration: 2200ms;
+  --post-bounce-duration: 500ms;
+
+  /* rotation while falling */
+  --paper-rotate-max: 12deg;
+
+  /* button mobile scale */
+  --mobile-button-scale: 0.9;
+
+  /* sounds */
+  --printer-volume: 0.55;
+  --rustle-volume: 0.6;
+  --paper-move-volume: 0.55; /* NEW */
+
+  /* TUNING / ADJUSTS */
+  --mouth-offset-adjust-px: 0px;
+  --paper-start-offset-y: 6px;
+  --paper-anchor-extra: 0px;
+  --final-bounce-height: 8px;
+  --final-bounce-duration: 420ms;
+}
+
+/* reset */
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg);
+  font-family:"Segoe UI", Roboto, Arial, sans-serif;
+  display:flex;
+  justify-content:center;
+  width:100%;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* layout */
+.top-wrap{
+  width:100%;
+  max-width:1200px;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  position:relative;
+  padding-top:6px;
+}
+
+/* hanger row */
+.hanger-area{
+  width:100%;
+  display:flex;
+  justify-content:space-evenly;
+  align-items:flex-start;
+  padding-bottom:10px;
+  position:relative;
+  z-index:20;
+}
+.hanger-area::before{content:"";position:absolute;top:0;left:0;right:0;height:0}
+
+/* hangers */
+.hanger{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  transform-origin:top center;
+  animation:swing 3s ease-in-out infinite alternate;
+  max-width:160px; flex:1;
+}
+@keyframes swing{0%{transform:rotate(2deg)}100%{transform:rotate(-2deg)}}
+.hanger:nth-child(2){animation-delay:-0.5s}
+.hanger:nth-child(3){animation-delay:-1.2s}
+.hanger:nth-child(4){animation-delay:-2.0s}
+.hanger:nth-child(5){animation-delay:-0.8s}
+.hanger:nth-child(6){animation-delay:-1.5s}
+
+/* rope & buttons */
+.rope{width:3px;background:#999;margin-top:0;z-index:1}
+.sign{
+  width:90%; height:55px; margin-top:-2px; border-radius:10px;
+  border:2px solid rgba(0,0,0,0.45); display:flex;align-items:center;justify-content:center;
+  color:#fff; font-weight:700; text-transform:uppercase; cursor:pointer;
+  box-shadow:0 6px 18px rgba(0,0,0,0.5); user-select:none; z-index:30; transition:transform .08s linear;
+}
+.sign:active{transform:scale(.97)}
+.sign:hover{filter:brightness(1.12)}
+
+/* mobile scaling keeps shape */
+@media (max-width:480px){
+  .sign{ transform-origin:center; transform: scale(var(--mobile-button-scale)); }
+  .hanger{ transform-origin: top center; }
+}
+
+/* printer wrapper */
+.printer-wrapper{
+  position:absolute;
+  left:var(--printer-x);
+  top:calc(var(--printer-y));
+  transform:translateX(-50%);
+  width:900px; height:420px; pointer-events:none; z-index:15; display:none; perspective:1000px;
+}
+
+/* printer parts */
+.printer-part{position:absolute; left:50%; transform:translateX(-50%); max-width:100%; pointer-events:none}
+.printer-bottom{ top:65px; width:1000px; z-index:1 }
+.printer-main{ top:70px; width:980px; z-index:6 }
+
+/* paperSlot */
+#paperSlot{
+  position:absolute; left:50%; transform:translateX(-50%); top:0;
+  width:100%; height:100%; pointer-events:none; z-index:5;
+}
+
+/* falling paper */
+.falling-paper {
+  position:fixed; left:0; top:0;
+  width:var(--paper-width-px); height:var(--paper-height-px);
+  background:#fff; box-shadow:0 10px 30px rgba(0,0,0,.35); border-radius:4px;
+  transform-origin:top center; display:flex; flex-direction:column; padding:6px; z-index:1000; overflow:hidden;
+  will-change: transform, opacity;
+}
+
+/* paper inside printer */
+.paper-inside {
+  position:absolute;
+  left:50%;
+  transform:translateX(-50%) rotateX(-20deg);
+  width:var(--paper-width-px);
+  height:var(--paper-height-px);
+  background:#fff;
+  z-index:5;
+  border-radius:4px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.25);
+  overflow:hidden;
+}
+
+/* hide image until reveal */
+.paper-inside img {
+  width:100%; height:100%; object-fit:contain; display:block;
+  opacity:0; transition:opacity .36s ease;
+}
+
+/* reveal */
+.paper-inside.showContent img { opacity:1; transform:translateY(0); }
+
+/* print-out animation */
+.paper-inside.printOut { animation: printOutAnim var(--print-duration) cubic-bezier(.2,.9,.2,1) forwards; }
+@keyframes printOutAnim {
+  0% { transform: translateX(-50%) rotateX(-10deg) translateY(0); }
+  60% { transform: translateX(-50%) rotateX(0deg) translateY(120px); }
+  100% { transform: translateX(-50%) rotateX(0deg) translateY(260px); }
+}
+
+/* final bounce */
+.paper-inside.bounce { animation: bounceAnim var(--final-bounce-duration, 420ms) ease-out forwards; }
+@keyframes bounceAnim {
+  0% { transform: translateX(-50%) translateY(0) scaleY(1); }
+  35% { transform: translateX(-50%) translateY(calc(-1 * var(--final-bounce-height, 8px))) scaleY(.998); }
+  65% { transform: translateX(-50%) translateY(calc(var(--final-bounce-height, 8px) / 3)) scaleY(1.002); }
+  100% { transform: translateX(-50%) translateY(0) scaleY(1); }
+}
+
+/* glow */
+.printer-catch {
+  box-shadow: 0 0 28px rgba(60,180,255,0.12), inset 0 0 40px rgba(255,255,255,0.02);
+  transition: box-shadow 220ms ease;
+}
+
+/* download UI */
+.download-btn {
+  position:fixed; right:14px; bottom:14px;
+  background:#222; color:#fff; padding:8px 12px;
+  border-radius:8px; cursor:pointer; display:none; z-index:2000;
+}
+
+/* DRAG styles */
+.paper-free {
+  cursor: grab;
+  pointer-events:auto;
+  transition: box-shadow 0.18s ease-out;
+}
+.paper-free:active {
+  cursor: grabbing;
+  box-shadow:0 18px 45px rgba(0,0,0,0.55);
+}
+
+/* tiny drag button */
+.drag-toggle {
+  position:absolute;
+  right:6px;
+  top:6px;
+  font-size:9px;
+  padding:2px 6px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,0.2);
+  background:rgba(0,0,0,0.6);
+  color:#fff;
+  cursor:pointer;
+  user-select:none;
+  z-index:20;
+  opacity:0.9;
+  pointer-events:auto; /* IMPORTANT: clickable */
+}
+.drag-toggle:hover{
+  opacity:1;
+}
+
+/* responsive */
+@media (max-width:768px){
+  :root { 
+    --paper-width-px: min(70vw, 475px);
+    --paper-height-px: calc(var(--paper-width-px) * 1.41);
+  }
+  .printer-wrapper{ width:100%; height:auto; }
+  .paper-inside{ width:var(--paper-width-px); height:var(--paper-height-px); }
+  .falling-paper{ width:var(--paper-width-px); height:var(--paper-height-px); }
+}
+</style>
+</head>
+<body>
+<div class="top-wrap">
+
+  <!-- HANGING BUTTONS -->
+  <div class="hanger-area">
+    <div class="hanger">
+      <div class="rope" style="height:70px"></div>
+      <div class="sign" data-day="MONDAY" data-img="mon.png" style="background:linear-gradient(135deg,#ff9a9e,#fecfef)">Mon</div>
+    </div>
+
+    <div class="hanger">
+      <div class="rope" style="height:100px"></div>
+      <div class="sign" data-day="TUESDAY" data-img="tue.png" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)">Tue</div>
+    </div>
+
+    <div class="hanger">
+      <div class="rope" style="height:80px"></div>
+      <div class="sign" data-day="WEDNESDAY" data-img="wed.png" style="background:linear-gradient(135deg,#84fab0,#8fd3f4)">Wed</div>
+    </div>
+
+    <div class="hanger">
+      <div class="rope" style="height:110px"></div>
+      <div class="sign" data-day="THURSDAY" data-img="thu.png" style="background:linear-gradient(135deg,#cfd9df,#e2ebf0); color:#333">Thu</div>
+    </div>
+
+    <div class="hanger">
+      <div class="rope" style="height:75px"></div>
+      <div class="sign" data-day="FRIDAY" data-img="fri.png" style="background:linear-gradient(135deg,#e0c3fc,#8ec5fc)">Fri</div>
+    </div>
+
+    <div class="hanger">
+      <div class="rope" style="height:90px"></div>
+      <div class="sign" data-day="FULL LIST" data-img="all.png" style="background:linear-gradient(135deg,#ff0844,#ffb199)">FULL</div>
+    </div>
+  </div>
+
+  <!-- PRINTER -->
+  <div class="printer-wrapper" id="printer">
+    <img src="2.svg" class="printer-part printer-bottom" alt="printer-bottom">
+    <div id="paperSlot"></div>
+    <img src="1.svg" class="printer-part printer-main" alt="printer-main">
+  </div>
+
+</div>
+
+<div class="download-btn" id="downloadBtn">Download</div>
+
+<!-- audio -->
+<audio id="printerSound" src="printer.mp3" preload="auto"></audio>
+<audio id="rustleSound" src="rustle.mp3" preload="auto"></audio>
+<audio id="paperMoveSound" src="paper-move.mp3" preload="auto"></audio>
+
+<script>
+/* CONFIG */
+const CONFIG = {
+  images: {
+    'mon.png':'mon.png', 'tue.png':'tue.png', 'wed.png':'wed.png',
+    'thu.png':'thu.png', 'fri.png':'fri.png', 'all.png':'all.png'
+  },
+  fallDuration: parseTime(getComputedStyle(document.documentElement).getPropertyValue('--fall-duration')) || 700,
+  fallEasing: getComputedStyle(document.documentElement).getPropertyValue('--fall-easing') || 'cubic-bezier(.2,.9,.3,1)',
+  rotateMax: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--paper-rotate-max')) || 12,
+  printDuration: parseTime(getComputedStyle(document.documentElement).getPropertyValue('--print-duration')) || 2200,
+  postBounceDuration: parseTime(getComputedStyle(document.documentElement).getPropertyValue('--post-bounce-duration')) || 500,
+  paperW: parseInt(getComputedStyle(document.documentElement).getPropertyValue('--paper-width-px')) || 260,
+  paperH: parseInt(getComputedStyle(document.documentElement).getPropertyValue('--paper-height-px')) || 370,
+  printerVolume: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--printer-volume')) || 0.55,
+  rustleVolume: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rustle-volume')) || 0.6,
+  paperMoveVolume: parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--paper-move-volume')) || 0.55
+};
+
+function parseTime(s){
+  if(!s) return null;
+  s = s.trim();
+  if(s.endsWith('ms')) return parseFloat(s);
+  if(s.endsWith('s')) return parseFloat(s) * 1000;
+  return parseFloat(s);
+}
+
+const MEASURED_MAIN_H_CM = 1.9;
+const MEASURED_LID_H_CM = 0.5;
+const MOUTH_OFFSET_RATIO = MEASURED_LID_H_CM / MEASURED_MAIN_H_CM;
+
+const signs = document.querySelectorAll('.sign');
+const printerWrapper = document.getElementById('printer');
+const paperSlot = document.getElementById('paperSlot');
+const printerSound = document.getElementById('printerSound');
+const rustleSound = document.getElementById('rustleSound');
+const downloadBtn = document.getElementById('downloadBtn');
+const paperMoveSound = document.getElementById('paperMoveSound');
+
+let isBusy = false;
+
+function showPrinter(){
+  if(printerWrapper.style.display === 'none' || getComputedStyle(printerWrapper).display === 'none')
+    printerWrapper.style.display = 'block';
+}
+
+function playPrinterSound(){
+  try{
+    printerSound.pause(); printerSound.currentTime = 0;
+    printerSound.volume = CONFIG.printerVolume;
+    printerSound.play().catch(()=>{});
+  } catch(e){}
+}
+function stopPrinterSound(){
+  try{ printerSound.pause(); printerSound.currentTime = 0; }catch(e){}
+}
+function playRustle(){
+  try{
+    rustleSound.pause(); rustleSound.currentTime = 0;
+    rustleSound.volume = CONFIG.rustleVolume;
+    rustleSound.play().catch(()=>{});
+  }catch(e){}
+}
+function playPaperMove(){
+  try{
+    paperMoveSound.currentTime = 0;
+    paperMoveSound.volume = CONFIG.paperMoveVolume;
+    paperMoveSound.play().catch(()=>{});
+  }catch(e){}
+}
+function stopPaperMove(){
+  try{
+    paperMoveSound.pause();
+    paperMoveSound.currentTime = 0;
+  }catch(e){}
+}
+
+function getPrinterMouthPoint(){
+  const main = printerWrapper.querySelector('.printer-main');
+  const mainRect = main.getBoundingClientRect();
+  const mouthAdjust = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--mouth-offset-adjust-px')) || 0;
+  const targetX = Math.round(mainRect.left + (mainRect.width / 2) - (CONFIG.paperW / 2));
+  const targetY = Math.round(mainRect.top + (mainRect.height * MOUTH_OFFSET_RATIO) + mouthAdjust);
+  return { x: targetX, y: targetY, mainRect };
+}
+
+function createFallingPaper(startRect){
+  const el = document.createElement('div');
+  el.className = 'falling-paper';
+  el.style.width = CONFIG.paperW + 'px';
+  el.style.height = CONFIG.paperH + 'px';
+  const gap = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--paper-start-offset-y')) || 6;
+  el.style.left = (startRect.left + startRect.width/2 - CONFIG.paperW/2) + 'px';
+  el.style.top = (startRect.bottom + gap) + 'px';
+  document.body.appendChild(el);
+  return el;
+}
+
+function animateFall(paperEl){
+  return new Promise(resolve => {
+    const target = getPrinterMouthPoint();
+    const startX = parseFloat(paperEl.style.left);
+    const startY = parseFloat(paperEl.style.top);
+    const deltaX = target.x - startX;
+    const deltaY = target.y - startY;
+    const rot = (Math.random()*2 -1) * CONFIG.rotateMax;
+
+    const keyframes = [
+      { transform: `translate(0px,0px) rotate(${rot/3}deg)`, offset:0 },
+      { transform: `translate(${deltaX*0.45}px, ${deltaY*0.45}px) rotate(${rot*0.6}deg)`, offset:0.45 },
+      { transform: `translate(${deltaX*0.85}px, ${deltaY*0.85}px) rotate(${rot*0.85}deg)`, offset:0.85 },
+      { transform: `translate(${deltaX}px, ${deltaY}px) rotate(${rot}deg)`, offset:1 }
+    ];
+
+    const timing = { duration: CONFIG.fallDuration, easing: CONFIG.fallEasing, fill:'forwards' };
+    const anim = paperEl.animate(keyframes, timing);
+    anim.onfinish = () => {
+      paperEl.style.transform = `translate(${deltaX}px, ${deltaY}px) rotate(${rot}deg)`;
+      resolve();
+    };
+  });
+}
+
+async function captureAndPrint(paperEl, imgFile){
+  const src = imgFile;
+  paperEl.remove();
+
+  const inside = document.createElement('div');
+  inside.className = 'paper-inside';
+  inside.style.width = CONFIG.paperW + 'px';
+  inside.style.height = CONFIG.paperH + 'px';
+  inside.innerHTML = `<img src="${src}" alt="printed">`;
+  paperSlot.innerHTML = '';
+  paperSlot.appendChild(inside);
+
+  printerWrapper.classList.add('printer-catch');
+  setTimeout(()=>printerWrapper.classList.remove('printer-catch'), 700);
+
+  playPrinterSound();
+  setTimeout(()=> {
+    inside.classList.add('showContent');
+    const img = inside.querySelector('img');
+    if(img) img.style.opacity = '1';
+  }, 300);
+
+  setTimeout(()=> {
+    inside.classList.add('printOut');
+
+    setTimeout(()=> {
+      stopPrinterSound();
+    }, CONFIG.printDuration + 40);
+
+    setTimeout(()=> {
+      const mp = getPrinterMouthPoint();
+      const mainRect = mp.mainRect;
+      const wrapperRect = printerWrapper.getBoundingClientRect();
+      const anchorExtra = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--paper-anchor-extra')) || 0;
+      const topInside = Math.round((mainRect.top + (mainRect.height * MOUTH_OFFSET_RATIO) - wrapperRect.top) + anchorExtra);
+
+      inside.style.position = 'absolute';
+      inside.style.top = topInside + 'px';
+      inside.style.left = '50%';
+      inside.style.transform = 'translateX(-50%)';
+      inside.classList.remove('printOut');
+      inside.classList.add('showContent');
+
+      const finalBounceHeight = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--final-bounce-height')) || 8;
+      const finalBounceDur = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--final-bounce-duration')) || 420;
+
+      document.documentElement.style.setProperty('--final-bounce-height', finalBounceHeight + 'px');
+      document.documentElement.style.setProperty('--final-bounce-duration', finalBounceDur + 'ms');
+
+      void inside.offsetWidth;
+      inside.classList.add('bounce');
+
+      setTimeout(()=> playRustle(), Math.round(finalBounceDur * 0.12));
+
+      showDownloadBriefly(src);
+
+      setTimeout(() => {
+        addDragToggleButton(inside);   // show Drag button
+      }, finalBounceDur + 40);
+
+      setTimeout(()=> {
+        isBusy = false;
+      }, CONFIG.postBounceDuration + 600);
+    }, CONFIG.printDuration + 120);
+  }, 520);
+}
+
+/* Drag button */
+function addDragToggleButton(inside){
+  if(inside.querySelector('.drag-toggle')) return;
+
+  const btn = document.createElement('div');
+  btn.className = 'drag-toggle';
+  btn.textContent = 'Drag';
+  inside.appendChild(btn);
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    btn.remove();
+    makeSheetDraggable(inside);
+  }, { once:true });
+}
+
+/* download */
+function showDownloadBriefly(imagePath){
+  if(!imagePath) return;
+  const filename = imagePath.split('/').pop() || 'printed-sheet.png';
+
+  downloadBtn.style.display = 'block';
+  downloadBtn.onclick = async () => {
+    try {
+      const response = await fetch(imagePath);
+      const blob = await response.blob();
+      const href = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = href;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(href);
+    } catch (e) {
+      const a = document.createElement('a');
+      a.href = imagePath;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+  };
+  setTimeout(()=> downloadBtn.style.display = 'none', 4500);
+}
+
+/* main flow */
+async function handlePrintFromButton(btn){
+  if(isBusy) return;
+  isBusy = true;
+  showPrinter();
+
+  let imgFile = btn.dataset.img || '';
+  if(CONFIG.images[imgFile]) imgFile = CONFIG.images[imgFile];
+
+  const startRect = btn.getBoundingClientRect();
+  const falling = createFallingPaper(startRect);
+
+  await animateFall(falling);
+  await new Promise(r=>setTimeout(r, 80));
+  await captureAndPrint(falling, imgFile);
+}
+
+Array.from(signs).forEach(s => s.addEventListener('click', (e) => handlePrintFromButton(e.currentTarget)));
+
+window.PS = {
+  setPrinterXY: (x,y) => {
+    document.documentElement.style.setProperty('--printer-x', x);
+    document.documentElement.style.setProperty('--printer-y', y);
+  },
+  setPaperSize: (w,h) => {
+    document.documentElement.style.setProperty('--paper-width-px', w + 'px');
+    document.documentElement.style.setProperty('--paper-height-px', h + 'px');
+    CONFIG.paperW = w; CONFIG.paperH = h;
+  },
+  setTimings: (fallMs, printMs, bounceMs) => {
+    document.documentElement.style.setProperty('--fall-duration', fallMs + 'ms');
+    document.documentElement.style.setProperty('--print-duration', printMs + 'ms');
+    document.documentElement.style.setProperty('--post-bounce-duration', bounceMs + 'ms');
+    CONFIG.fallDuration = fallMs; CONFIG.printDuration = printMs; CONFIG.postBounceDuration = bounceMs;
+  },
+  setImages: (map) => { CONFIG.images = Object.assign(CONFIG.images, map); }
+};
+
+document.addEventListener('click', () => showPrinter(), { once: true });
+
+/* DRAG implementation (only after Drag button) */
+function makeSheetDraggable(inside){
+  const rect = inside.getBoundingClientRect();
+  const sheet = inside;
+  paperSlot.innerHTML = '';
+
+  sheet.classList.add('paper-free');
+  sheet.style.position = 'fixed';
+  sheet.style.left = rect.left + 'px';
+  sheet.style.top = rect.top + 'px';
+  sheet.style.transform = 'translate(0,0)';
+  sheet.style.zIndex = 1500;
+
+  document.body.appendChild(sheet);
+
+  let isDragging = false;
+  let startX = 0, startY = 0;
+  let originLeft = 0, originTop = 0;
+  let lastX = 0, lastY = 0;
+  let vx = 0, vy = 0;
+  let lastT = 0;
+  let inertiaId = null;
+
+  const onPointerDown = (e) => {
+    e.preventDefault();
+    const point = getPoint(e);
+    isDragging = true;
+    startX = point.x;
+    startY = point.y;
+    const r = sheet.getBoundingClientRect();
+    originLeft = r.left;
+    originTop = r.top;
+    lastX = point.x;
+    lastY = point.y;
+    lastT = performance.now();
+    vx = vy = 0;
+    if(inertiaId) cancelAnimationFrame(inertiaId);
+    sheet.style.transition = 'none';
+    playPaperMove();
+  };
+
+  const onPointerMove = (e) => {
+    if(!isDragging) return;
+    const point = getPoint(e);
+    const now = performance.now();
+    const dt = now - lastT || 16;
+
+    const dx = (point.x - startX) * 0.5; // slower
+    const dy = (point.y - startY) * 0.5;
+
+    sheet.style.left = (originLeft + dx) + 'px';
+    sheet.style.top = (originTop + dy) + 'px';
+
+    vx = ((point.x - lastX) / dt) * 0.35;
+    vy = ((point.y - lastY) / dt) * 0.35;
+
+    lastX = point.x;
+    lastY = point.y;
+    lastT = now;
+  };
+
+  const onPointerUp = () => {
+    if(!isDragging) return;
+    isDragging = false;
+    stopPaperMove();
+    applyInertia();
+  };
+
+  function getPoint(e){
+    if(e.touches && e.touches[0]) return { x:e.touches[0].clientX, y:e.touches[0].clientY };
+    return { x:e.clientX, y:e.clientY };
+  }
+
+  function applyInertia(){
+    const friction = 0.9;
+    const minVelocity = 0.012;
+
+    let x = parseFloat(sheet.style.left) || 0;
+    let y = parseFloat(sheet.style.top) || 0;
+
+    const step = () => {
+      vx *= friction;
+      vy *= friction;
+      x += vx * 22;
+      y += vy * 22;
+
+      sheet.style.left = x + 'px';
+      sheet.style.top = y + 'px';
+
+      if(Math.abs(vx) > minVelocity || Math.abs(vy) > minVelocity){
+        inertiaId = requestAnimationFrame(step);
+      }else{
+        inertiaId = null;
+      }
+    };
+
+    if(Math.abs(vx) > minVelocity || Math.abs(vy) > minVelocity){
+      inertiaId = requestAnimationFrame(step);
+    }
+  }
+
+  sheet.addEventListener('mousedown', onPointerDown);
+  document.addEventListener('mousemove', onPointerMove);
+  document.addEventListener('mouseup', onPointerUp);
+
+  sheet.addEventListener('touchstart', onPointerDown, {passive:false});
+  document.addEventListener('touchmove', onPointerMove, {passive:false});
+  document.addEventListener('touchend', onPointerUp);
+}
+</script>
+<script src="toast.js"></script>
+
+</body>
+</html>

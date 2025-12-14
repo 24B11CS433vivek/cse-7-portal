@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="toast.css">
+
+<meta charset="UTF-8">
+<title>Certifications</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --bg-overlay: 0;   /* more transparent */
+  --tray-overlay: 0.6;
+}
+
+*{
+  box-sizing:border-box;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+}
+
+body{
+  margin:0;
+  height:100vh;
+  overflow:hidden;
+  background:#000;
+  color:#fff;
+}
+
+/* ===== BACKGROUND ===== */
+.bg{
+  position:fixed;
+  inset:0;
+  background:url("back.png") no-repeat;
+  background-size:cover;
+  background-position:left center; /* LEFT + MIDDLE priority */
+  z-index:0;
+}
+
+.bg::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,var(--bg-overlay));
+}
+
+/* ===== SNOW ===== */
+canvas{
+  position:fixed;
+  inset:0;
+  z-index:1;
+  pointer-events:none;
+}
+
+/* ===== OPEN BUTTON ===== */
+.open-btn{
+  position:fixed;
+  bottom:26px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:14px 30px;
+  border-radius:28px;
+  background:rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.3);
+  backdrop-filter:blur(10px);
+  color:#fff;
+  font-size:16px;
+  z-index:3;
+  cursor:pointer;
+}
+
+/* ===== TRAY ===== */
+.tray{
+  position:fixed;
+  left:0;
+  bottom:-100%;
+  width:100%;
+  height:75%;
+  background:rgba(20,20,20,var(--tray-overlay));
+  backdrop-filter:blur(20px);
+  border-radius:22px 22px 0 0;
+  z-index:4;
+  transition:bottom .45s ease;
+  display:flex;
+  flex-direction:column;
+}
+
+.tray.open{ bottom:0; }
+
+.handle{
+  width:60px;
+  height:6px;
+  background:#bbb;
+  border-radius:6px;
+  margin:10px auto;
+}
+
+/* ===== CLOSE BUTTON ===== */
+.close-btn{
+  position:absolute;
+  right:16px;
+  top:12px;
+  background:none;
+  border:none;
+  color:#fff;
+  font-size:20px;
+  cursor:pointer;
+}
+
+.content{
+  padding:18px;
+  overflow-y:auto;
+}
+
+/* ===== APPS ===== */
+.apps{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
+}
+
+.app{
+  background:rgba(255,255,255,.08);
+  border-radius:16px;
+  padding:18px;
+  text-align:center;
+  cursor:pointer;
+}
+
+.app img{
+  width:64px;
+  height:64px;
+  object-fit:contain;
+  margin-bottom:8px;
+}
+
+/* ===== COURSES ===== */
+.courses{ display:none; margin-top:18px; }
+.courses.active{ display:block; }
+
+.course{
+  display:flex;
+  gap:14px;
+  align-items:center;
+  background:rgba(255,255,255,.12);
+  padding:12px;
+  border-radius:14px;
+  margin-bottom:12px;
+}
+
+.course img{
+  width:48px;
+  height:48px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.course a{
+  color:#fff;
+  text-decoration:none;
+  font-size:15px;
+}
+
+/* ===== MOBILE ===== */
+@media(max-width:600px){
+  .tray{ height:80%; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+<canvas id="snow"></canvas>
+
+<button class="open-btn" onclick="openTray()">Show Certifications</button>
+
+<div class="tray" id="tray">
+  <div class="handle"></div>
+  <button class="close-btn" onclick="closeTray()">✕</button>
+
+  <div class="content">
+    <div class="apps">
+      <div class="app" onclick="showCourses('coursera')">
+        <img src="coursera.png">
+        <div>Coursera</div>
+      </div>
+
+      <div class="app" onclick="showCourses('infosys')">
+        <img src="infosys.png">
+        <div>Infosys Springboard</div>
+      </div>
+    </div>
+
+    <!-- COURSERA -->
+    <div class="courses" id="coursera">
+      <h3>Mandatory Coursera Courses</h3>
+
+      <div class="course">
+        <img src="https://images.unsplash.com/photo-1581090700227-1e37b190418e?w=200">
+        <a href="https://www.coursera.org/learn/aditya-university-5fce65d6-99fe-4d81-b411-6e73ade31e80?source=admin-share" target="_blank">
+          Operating Systems (OS)
+        </a>
+      </div>
+
+      <div class="course">
+        <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?w=200">
+        <a href="https://www.coursera.org/learn/aditya-university-870deef2-69eb-450d-8933-eadaee3b05f7?source=admin-share" target="_blank">
+          Artificial Intelligence (AI)
+        </a>
+      </div>
+
+      <div class="course">
+        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=200">
+        <a href="https://www.coursera.org/learn/aditya-university-9d026ccc-99d0-41eb-a6bc-371220518f1d?source=admin-share" target="_blank">
+          Quantum Computing
+        </a>
+      </div>
+    </div>
+
+    <!-- INFOSYS -->
+    <div class="courses" id="infosys">
+      <h3>Infosys Springboard</h3>
+
+      <div class="course">
+        <img src="express.png">
+        <a href="https://infyspringboard.onwingspan.com/web/en/app/toc/lex_auth_01384329019595161635073_shared/overview" target="_blank">
+          Express JS
+        </a>
+      </div>
+
+      <div class="course">
+        <img src="react.png">
+        <a href="https://infyspringboard.onwingspan.com/web/en/app/toc/lex_10648877150323546000_shared/overview" target="_blank">
+          React JS
+        </a>
+      </div>
+
+      <div class="course">
+        <img src="mongo.png">
+        <a href="https://infyspringboard.onwingspan.com/web/en/app/toc/lex_auth_01384311512566988831247_shared/overview" target="_blank">
+          MongoDB
+        </a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ===== TRAY ===== */
+const tray=document.getElementById("tray");
+let startY=0;
+
+function openTray(){ tray.classList.add("open"); }
+function closeTray(){ tray.classList.remove("open"); }
+
+tray.addEventListener("touchstart",e=>startY=e.touches[0].clientY);
+tray.addEventListener("touchmove",e=>{
+  if(e.touches[0].clientY-startY>120) closeTray();
+});
+
+/* ===== COURSE SWITCH ===== */
+function showCourses(id){
+  document.querySelectorAll(".courses").forEach(c=>c.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+/* ===== REALISTIC SNOW (BOTTOM ONLY) ===== */
+const canvas=document.getElementById("snow");
+const ctx=canvas.getContext("2d");
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight;}
+resize();addEventListener("resize",resize);
+
+let flakes=[];
+let ground=[];
+
+function Snow(){
+  this.x=Math.random()*canvas.width;
+  this.y=Math.random()*-canvas.height;
+  this.r=Math.random()*2+1;
+  this.v=Math.random()*1+.5;
+}
+
+for(let i=0;i<180;i++) flakes.push(new Snow());
+
+function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  flakes.forEach(f=>{
+    f.y+=f.v;
+    ctx.fillStyle="rgba(255,255,255,.95)";
+    ctx.beginPath();
+    ctx.arc(f.x,f.y,f.r,0,Math.PI*2);
+    ctx.fill();
+
+    if(f.y>=canvas.height){
+      ground.push(f.x);
+      f.y=Math.random()*-100;
+    }
+  });
+
+  ground.forEach(x=>{
+    ctx.beginPath();
+    ctx.arc(x,canvas.height,2,0,Math.PI*2);
+    ctx.fill();
+  });
+
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+<script src="toast.js"></script>
+
+</body>
+</html>

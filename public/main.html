@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <link rel="stylesheet" href="toast.css">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CSE 7 — Dashboard</title>
+
+
+<style>
+  /* NOTICE BAR (Y-axis adjustable) */
+.notice-bar {
+  width: 101.9%;
+  background: linear-gradient(90deg, #079ddd, #0d1849, #2c5364);
+  color: #fff;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 5px 0;
+  font-size: 16px;
+  font-weight: 500;
+
+  position: relative;
+  top: -470px; /* ⬆ Y-axis control (increase negative = move up) */
+  
+}
+
+/* MOVING TEXT */
+.notice-text {
+  display: inline-block;
+  padding-left: 100%;
+  animation: scrollText 20s linear infinite;
+}
+
+/* X-axis scrolling animation */
+@keyframes scrollText {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+@media (max-width: 768px) {
+  .notice-bar {
+    position: fixed;   /* 🔒 keeps it visible while scrolling */
+    top: 0;            /* ✅ DO NOT use negative values on mobile */
+    left: 0;
+    width: 100%;
+
+    font-size: 14px;
+    padding: 5px 0;
+    z-index: 9999;
+  }
+}
+
+
+:root{
+  --bg:#0a0e1f;
+  --card:#1a2338;
+  --glass:#1e2a44;
+  --muted:#a8b8d8;
+  --accent:#00d4ff;
+  --accent-glow:#00d4ff20;
+  --white:#ffffff;
+}
+
+
+/* your existing styles unchanged */
+* {
+  box-sizing: border-box;
+}
+
+
+body{
+  margin:0;
+  background: 
+    linear-gradient(135deg, #0a0e1f 0%, #1a2338 50%, #0a0e1f 100%),
+    radial-gradient(800px 400px at 20% 20%, rgba(0,212,255,0.1), transparent),
+    radial-gradient(600px 300px at 80% 80%, rgba(0,212,255,0.05), transparent);
+  font-family:'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  color:var(--white);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:40px 20px;
+}
+
+
+.welcome {
+  background:var(--glass);
+  backdrop-filter:blur(15px);
+  padding:16px 32px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.1);
+  margin-bottom:20px;
+  font-size:16px;
+  font-weight:500;
+  opacity:0;
+  transform:translateY(-12px);
+  box-shadow:0 8px 32px rgba(0,0,0,0.3);
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+
+/* smooth welcome animation */
+.welcome.show {
+  animation: fadeSlideIn 0.6s ease forwards;
+}
+
+
+@keyframes fadeSlideIn {
+  from { opacity:0; transform:translateY(-12px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+
+h1{
+  font-size:32px;
+  font-weight:800;
+  margin:0 0 12px 0;
+  background:linear-gradient(135deg, var(--accent), #ffffff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  letter-spacing:-0.5px;
+}
+
+
+.sub{
+  color:var(--muted);
+  margin-bottom:20px;
+  font-size:15px;
+  text-align:center;
+  max-width:500px;
+}
+
+
+/* ADMIN ANNOUNCEMENT BAR */
+.announcement-bar {
+  width:100%;
+  max-width:1100px;
+  background:linear-gradient(90deg, rgba(0,212,255,0.18), rgba(96,165,250,0.18));
+  border-radius:14px;
+  padding:10px 18px;
+  border:1px solid rgba(0,212,255,0.4);
+  color:#e0f2fe;
+  font-size:14px;
+  display:none;        /* hidden by default */
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  margin-bottom:24px;
+  opacity:0;
+  transform:translateY(-8px);
+}
+
+
+.announcement-bar.show {
+  animation: fadeSlideIn 0.5s 0.2s ease forwards;
+}
+
+
+.announcement-left {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+
+.announcement-tag {
+  background:rgba(15,23,42,0.7);
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+}
+
+
+.announcement-close {
+  background:transparent;
+  border:none;
+  color:#e0f2fe;
+  cursor:pointer;
+  font-size:18px;
+  line-height:1;
+  padding:2px 6px;
+  border-radius:999px;
+  transition:background 0.2s ease;
+}
+
+
+.announcement-close:hover {
+  background:rgba(15,23,42,0.5);
+}
+
+
+/* grid and cards (unchanged) */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+  gap:24px;
+  width:100%;
+  max-width:1100px;
+}
+
+
+.card{
+  background:var(--glass);
+  padding:28px;
+  border-radius:20px;
+  border:1px solid rgba(255,255,255,0.08);
+  backdrop-filter:blur(15px);
+  text-align:center;
+  cursor:pointer;
+  transition:all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position:relative;
+  overflow:hidden;
+}
+
+
+.card::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:4px;
+  background:linear-gradient(90deg, transparent, var(--accent), transparent);
+  transform:scaleX(0);
+  transition:all 0.4s ease;
+}
+
+
+.card:hover{
+  transform:translateY(-8px);
+  border-color:rgba(0,212,255,0.3);
+  box-shadow:0 20px 40px rgba(0,212,255,0.15);
+}
+
+
+.card:hover::before{
+  transform:scaleX(1);
+}
+
+
+.card h2{
+  margin:0 0 12px 0;
+  font-size:22px;
+  font-weight:700;
+  color:var(--white);
+}
+
+
+.card p{
+  margin:0;
+  color:var(--muted);
+  font-size:14px;
+  line-height:1.5;
+}
+
+
+.card:active{
+  transform:translateY(-4px) scale(0.98);
+}
+
+
+/* Simple entrance animation */
+@keyframes fadeInUp {
+  from {opacity:0; transform:translateY(20px);}
+  to {opacity:1; transform:translateY(0);}
+}
+
+
+.card{
+  animation:fadeInUp 0.5s ease forwards;
+  opacity:0;
+}
+
+
+.grid .card:nth-child(1){animation-delay:0.1s;}
+.grid .card:nth-child(2){animation-delay:0.15s;}
+.grid .card:nth-child(3){animation-delay:0.2s;}
+.grid .card:nth-child(4){animation-delay:0.25s;}
+.grid .card:nth-child(5){animation-delay:0.3s;}
+.grid .card:nth-child(6){animation-delay:0.35s;}
+.grid .card:nth-child(7){animation-delay:0.4s;}
+
+
+/* Responsive */
+@media (max-width:768px) {
+  body { padding:30px 16px; }
+  h1 { font-size:28px; }
+  .grid { grid-template-columns:1fr; gap:20px; }
+  .welcome { font-size:15px; padding:14px 24px; margin-bottom:18px; }
+  .announcement-bar { font-size:13px; padding:8px 12px; }
+}
+</style>
+</head>
+
+
+<body>
+<!-- Welcome Message -->
+<div id="welcomeMsg" class="welcome" style="display:none;">
+  <span>👋</span>
+  <span>Welcome back, <strong id="studentName"></strong>!</span>
+</div>
+
+
+<!-- Admin-only Announcement Bar -->
+<div id="announcementBar" class="announcement-bar">
+  <div class="announcement-left">
+    <div class="announcement-tag">Admin</div>
+    <div id="announcementText">
+      No new announcements. Add latest updates here.
+    </div>
+  </div>
+  <button class="announcement-close" id="closeAnnouncement" aria-label="Close announcements">
+    ×
+  </button>
+</div>
+
+
+<h1>CSE 7 Dashboard</h1>
+<div class="sub">Select a module to continue your studies</div>
+
+
+<div class="grid">
+  <div class="card" onclick="goTo('timetable.html')">
+    <h2>📅 Timetable</h2>
+    <p>Complete CSE 7 semester schedule</p>
+  </div>
+
+
+  <div class="card" onclick="goTo('codinglab.html')">
+    <h2>💻 Coding Lab</h2>
+    <p>DSA, Python, Java practice</p>
+  </div>
+
+
+  <div class="card" onclick="goTo('certifications.html')">
+    <h2>🏅 Certifications</h2>
+    <p>Track your achievements</p>
+  </div>
+
+
+  <div class="card" onclick="goTo('materials.html')">
+    <h2>📚 Study Materials</h2>
+    <p>Subject-wise notes & resources</p>
+  </div>
+
+
+  <div class="card" onclick="goTo('student.html')">
+    <h2>🔐 Student Login</h2>
+    <p>Verify with roll number</p>
+  </div>
+
+
+
+
+  <div class="card" onclick="goTo('others.html')">
+    <h2>📋 Others</h2>
+    <p>Assignments & announcements</p>
+  </div>
+</div>
+
+
+<script>
+// Complete Student Database
+const students = {
+  "24B11CS261": "MALAGONDA HAREESH",
+  "24B11CS266": "MANEPALLI MOHITH KARTHIKEYA",
+  "24B11CS270": "MAROTU SATYA SURYA GANESH",
+  "24B11CS281": "MOGILIGUNTA AKHIL",
+  "24B11CS282": "MOHAMMAD ASIF",
+  "24B11CS285": "MOHAMMED MOIN",
+  "24B11CS290": "MUDI SRINIVASULU",
+  "24B11CS291": "MUDRAGADA SAI SATHWIK",
+  "24B11CS294": "MUTTE VAMSI",
+  "24B11CS296": "NANDAMURI HARI VEERA NAGA CHARAN",
+  "24B11CS297": "NAGOJU LAKSHMI CHENDRIKA",
+  "24B11CS304": "RAMINEEDI VENKATA SRI SAI PHANI NEELESH",
+  "24B11CS322": "PANDALA PRASANTH KUMAR",
+  "24B11CS327": "PALA SRIDATTA SAI",
+  "24B11CS328": "CARDETTE DHLIWAYO",
+  "24B11CS340": "PENKE VEERA VENKATA AVINASH",
+  "24B11CS345": "PIDUGU VENKATA KRISHNA",
+  "24B11CS346": "PILLA DHANUSH",
+  "24B11CS349": "PITTA MOHAN GANESH",
+  "24B11CS351": "PAPOLU LIKHITHA",
+  "24B11CS357": "PRIYAMWAD RAI",
+  "24B11CS358": "PRIYANSHU SARMA",
+  "24B11CS361": "PULLA LAKSHMI KALABHIRAM",
+  "24B11CS362": "PULUGUZZU KEERTHI DARAHAS",
+  "24B11CS363": "TATIKONDA ANVITH",
+  "24B11CS367": "RAJARAPU DHANALAKSHMI",
+  "24B11CS368": "RAJARAPU KARTHIK",
+  "24B11CS369": "RAKESH JANGA",
+  "24B11CS370": "RAMAKURTHI HEMANTH PRASAD",
+  "24B11CS372": "RAPARTHI VEERA VENKATA SIVA SANTHOSH KUMAR",
+  "24B11CS373": "RASAMSETTI HARSHA KUMAR",
+  "24B11CS378": "REDLA LAVANYA",
+  "24B11CS380": "KODAVANDLAPALLI LAKSHMI SREENIVAS REDDY",
+  "24B11CS382": "RONGALA LIKHITH SAI VARDHAN",
+  "24B11CS383": "RYALI ANUHYA",
+  "24B11CS384": "S TEJDEEP",
+  "24B11CS386": "SABAKA ABHISHEK",
+  "24B11CS391": "SAMALA YASASWINI",
+  "24B11CS394": "SAPPARAPU TEJA NAGA SATYA GANESH",
+  "24B11CS399": "SATTENAPALLI BHASKAR KRISHNA",
+  "24B11CS400": "SATTI ANAND REDDY",
+  "24B11CS401": "SATTI HAMSINI",
+  "24B11CS402": "SATTI ROHITH VENKATA MANIKANTA REDDY",
+  "24B11CS403": "SAVALAM VASANTHI",
+  "24B11CS417": "SINDEY ABHINAV",
+  "24B11CS421": "SOME SAI SUSHANTH",
+  "24B11CS422": "PANTHAM SRI SAI SIVA NAGA RAMANI KUMARI",
+  "24B11CS427": "SUSANNA HEBZIBAH POSUPO",
+  "24B11CS430": "TADI BHARGAV RAM",
+  "24B11CS433": "TALAGATURI VIVEK",
+  "24B11CS438": "TATAVARTHI SAI ADITHYA",
+  "24B11CS440": "CHENNABOINA PREETHI",
+  "24B11CS442": "KANAKA RAKESH VARMA",
+  "24B11CS444": "THIKKISETTI VEERA VENKATA SATYANARAYANA",
+  "24B11CS453": "TIRUVAIPATI HARINI SRI VEDHA ALVAR",
+  "24B11CS456": "LAKSHMI VENKAT LOKESH MURTHY TURANGI",
+  "24B11CS457": "UDARAGUDI RAVI KISHORE",
+  "24B11CS459": "UNDAMATLA SRI SURYA",
+  "24B11CS464": "VASAMSETTI VENKATA NIKHIL",
+  "24B11CS465": "VADDE DIVYA",
+  "24B11CS470": "VALLAGI JOSHUVA CHAKRAVARTHY",
+  "24B11CS471": "SHAIK SHAROOK",
+  "24B11CS472": "VANAPARTHI MAHI SATYA SRIVALLI",
+  "24B11CS474": "VANKA ADITYA",
+  "24B11CS476": "VARIKUTI MAHESH",
+  "24B11CS483": "VELAGALA SUBBIREDDY",
+  "24B11CS484": "VELUGUBANTI RAM CHARAN SAI",
+  "24B11CS486": "VENNAPUSA GANESH",
+  "24B11CS489": "VISWAJEET",
+  "24B11CS492": "VUPPALA SRI AKSHITA",
+  "25B61CS001": "P L NAINITHA"
+};
+
+
+// Set which rolls are admins (only they see announcements bar)
+const adminRolls = [
+  "24B11CS261", // example admin
+  // add more admin roll numbers here
+];
+
+
+// Check login status and show welcome + admin bar
+function checkLogin() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const rollFromUrl = urlParams.get('roll');
+  let rollNumber = rollFromUrl;
+
+
+  // if login page used localStorage only, support that too
+  if (!rollNumber) {
+    try {
+      rollNumber = localStorage.getItem('cse7_logged_in');
+    } catch(e) {}
+  }
+
+
+  // also support previous sessionStorage
+  if (!rollNumber) {
+    rollNumber = sessionStorage.getItem('rollNumber');
+  }
+
+
+  if (rollNumber) {
+    rollNumber = rollNumber.toUpperCase();
+  }
+
+
+  if (rollNumber && students[rollNumber]) {
+    const welcomeMsg = document.getElementById('welcomeMsg');
+    const studentName = document.getElementById('studentName');
+
+
+    studentName.textContent = students[rollNumber];
+    welcomeMsg.style.display = 'flex';
+
+
+    // trigger smooth animation
+    requestAnimationFrame(() => {
+      welcomeMsg.classList.add('show');
+    });
+
+
+    // persist
+    sessionStorage.setItem('rollNumber', rollNumber);
+
+
+    // show admin announcement if user is admin
+    if (adminRolls.includes(rollNumber)) {
+      const bar = document.getElementById('announcementBar');
+      const closed = localStorage.getItem('cse7_announcement_closed');
+      if (!closed) {
+        bar.style.display = 'flex';
+        requestAnimationFrame(() => {
+          bar.classList.add('show');
+        });
+      }
+    }
+  }
+}
+
+
+function goTo(page) {
+  window.location.href = page;
+}
+
+
+// Close announcement
+document.getElementById('closeAnnouncement').addEventListener('click', () => {
+  const bar = document.getElementById('announcementBar');
+  bar.style.display = 'none';
+  try {
+    localStorage.setItem('cse7_announcement_closed', '1');
+  } catch(e) {}
+});
+
+
+// Initialize
+window.addEventListener('load', checkLogin);
+</script>
+<!-- NOTICE BAR -->
+<div class="notice-bar">
+  <div class="notice-text" id="noticeText">
+    More features are coming soon please stay tuned 😊...
+  </div>
+</div>
+<script src="toast.js"></script>
+
+
+</body>
+</html>

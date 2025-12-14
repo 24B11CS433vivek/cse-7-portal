@@ -1,0 +1,32 @@
+[
+  {
+    "username": "artificialintelligence",
+    "password": "admin",
+    "subject": "Artificial_Intelligence"
+  },
+  {
+    "username": "operatingsystem",
+    "password": "admin",
+    "subject": "Operating_System"
+  },
+  {
+    "username": "nosql",
+    "password": "admin",
+    "subject": "Nosql"
+  },
+  {
+    "username": "probabilitymaths",
+    "password": "admin",
+    "subject": "Probability_Maths"
+  },
+  {
+    "username": "javaprogramming",
+    "password": "admin",
+    "subject": "Java_Programming"
+  },
+  {
+    "username": "codinglab",
+    "password": "admin",
+    "subject": "Coding_Lab"
+  }
+]

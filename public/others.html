@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="toast.css">
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Updates in Progress</title>
+
+<style>
+    
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    overflow: hidden;
+}
+
+/* BACKGROUND FLOATING SHAPES */
+.shape {
+    position: absolute;
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    animation: float 8s ease-in-out infinite;
+}
+.shape.one { top: 10%; left: 10%; animation-delay: 0s; }
+.shape.two { bottom: 15%; right: 12%; animation-delay: 2s; }
+.shape.three { top: 60%; left: 70%; animation-delay: 4s; }
+
+@keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-30px); }
+}
+
+/* MAIN CARD */
+.card {
+    position: relative;
+    background: rgba(255,255,255,0.12);
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    padding: 45px 35px;
+    max-width: 420px;
+    width: 90%;
+    text-align: center;
+    color: white;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+    animation: fadeIn 1.2s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ICON */
+.icon {
+    font-size: 70px;
+    margin-bottom: 20px;
+    animation: rotate 5s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* TEXT */
+h1 {
+    font-size: 26px;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+p {
+    font-size: 15px;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* SYMBOL ROW */
+.symbols {
+    margin-top: 25px;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.symbol {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.18);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    animation: pulse 2s infinite;
+}
+
+.symbol:nth-child(2) { animation-delay: .4s; }
+.symbol:nth-child(3) { animation-delay: .8s; }
+
+@keyframes pulse {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(1); opacity: 0.8; }
+}
+
+/* FOOTER NOTE */
+.footer {
+    margin-top: 30px;
+    font-size: 13px;
+    opacity: 0.75;
+}
+
+/* MOBILE */
+@media (max-width: 480px) {
+    h1 { font-size: 22px; }
+    .icon { font-size: 60px; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- FLOATING BACKGROUND SHAPES -->
+<div class="shape one"></div>
+<div class="shape two"></div>
+<div class="shape three"></div>
+
+<!-- MAIN CARD -->
+<div class="card">
+    <div class="icon">⚙️</div>
+    <h1>Features Updating Soon</h1>
+    <p>
+        We are currently enhancing this section with new improvements,
+        better performance, and exciting features.
+        <br><br>
+        Please check back shortly.
+    </p>
+
+    <div class="symbols">
+        <div class="symbol">🚀</div>
+        <div class="symbol">✨</div>
+        <div class="symbol">🔧</div>
+    </div>
+
+    <div class="footer">
+        Thank you for your patience 💙
+    </div>
+</div>
+<script src="toast.js"></script>
+
+</body>
+</html>
