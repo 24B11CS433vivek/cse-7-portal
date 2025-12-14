@@ -1,3 +1,7 @@
+app.get('/', (req, res) => {
+    res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
+
 /**
  * server.js - Backend for Study Material Portal
  */
@@ -68,6 +72,11 @@ const requireAuth = (req, res, next) => {
     req.user = sessions[token];
     next();
 };
+// --- SERVE MAIN WEBSITE ---
+app.get('/', (req, res) => {
+    res.sendFile(path.join(PUBLIC_DIR, 'index.html'));
+});
+
 
 // --- MULTER CONFIG ---
 const storage = multer.diskStorage({
