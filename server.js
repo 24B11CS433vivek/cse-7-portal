@@ -10,7 +10,8 @@ const crypto = require('crypto');
 const mime = require('mime-types');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+
 
 // --- CONFIGURATION ---
 const DATA_DIR = path.join(__dirname, 'materials');
