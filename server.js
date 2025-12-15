@@ -25,7 +25,7 @@ const SUBJECTS = [
   'Nosql',
   'Probability_Maths',
   'Java_Programming',
-  'Coding_Lab'
+  'Advanced_mern'
 ];
 
 // --- INITIALIZATION ---
