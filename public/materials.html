@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" href="toast.css">
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academic Study Portal</title>
@@ -65,6 +63,7 @@
             padding: 0.5rem 1rem; border-radius: 8px; border: none; cursor: pointer;
             font-weight: 600; font-size: 0.9rem; transition: 0.2s;
             display: inline-flex; align-items: center; gap: 0.5rem;
+            text-decoration: none;
         }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-hover); }
@@ -207,6 +206,7 @@
         <!-- GRID -->
         <div class="grid" id="materialsGrid">
             <!-- Injected by JS -->
+            <p style="color:var(--text-sub)">Loading materials...</p>
         </div>
     </div>
 
@@ -229,7 +229,7 @@
         </div>
     </div>
 
-    <!-- MODAL: CHANGE PASSWORD (UPDATED) -->
+    <!-- MODAL: CHANGE PASSWORD -->
     <div class="modal" id="pwdModal">
         <div class="modal-content">
             <h3 style="margin-bottom:1rem;">Update Password</h3>
@@ -325,6 +325,8 @@
             const search = document.getElementById('searchInput').value.toLowerCase();
             grid.innerHTML = '';
 
+            let hasFiles = false;
+
             Object.keys(subjects).forEach(key => {
                 const meta = subjects[key];
                 const files = fileData[key] || [];
@@ -335,6 +337,7 @@
                 
                 if (search && !subjectMatch && filtered.length === 0) return;
 
+                hasFiles = true;
                 const displayFiles = search ? filtered : files;
                 const isActive = search ? 'active' : '';
 
@@ -354,17 +357,17 @@
                         ${displayFiles.length ? displayFiles.map(f => `
                             <div class="file-item">
                                 <div class="file-info">
-                                    <div class="file-icon"><i class="fa-solid ${getIcon(f.type)}"></i></div>
+                                    <div class="file-icon"><i class="fa-solid ${getIcon(f.type || f.name)}"></i></div>
                                     <div>
                                         <a href="${API}/file/${key}/${encodeURIComponent(f.name)}?action=preview" target="_blank" class="file-name text-truncate" title="${f.name}">${f.name}</a>
                                         <div class="file-meta">${f.size} • ${new Date(f.uploadedAt).toLocaleDateString()} • ⬇ ${f.downloads}</div>
                                     </div>
                                 </div>
                                 <div class="action-btns">
-                                    <!-- PREVIEW BUTTON (ADDED) -->
+                                    <!-- PREVIEW -->
                                     <a href="${API}/file/${key}/${encodeURIComponent(f.name)}?action=preview" target="_blank" class="btn btn-outline" style="padding:5px 10px" title="Preview"><i class="fa-solid fa-eye"></i></a>
                                     
-                                    <!-- DOWNLOAD BUTTON -->
+                                    <!-- DOWNLOAD -->
                                     <a href="${API}/file/${key}/${encodeURIComponent(f.name)}" class="btn btn-outline" style="padding:5px 10px" title="Download"><i class="fa-solid fa-download"></i></a>
                                     
                                     ${(currentUser && currentUser.subject === key) ? `
@@ -378,6 +381,10 @@
                 `;
                 grid.appendChild(card);
             });
+
+            if(!hasFiles) {
+                grid.innerHTML = '<p style="text-align:center; width:100%; color:var(--text-sub)">No results found.</p>';
+            }
         }
 
         // --- AUTH ---
@@ -396,11 +403,17 @@
                     closeModal('loginModal');
                     updateAuthUI();
                     fetchFiles();
-                } else { alert('Invalid Login'); }
+                } else { alert(data.error || 'Invalid Login'); }
             } catch(e) { alert('Error logging in'); }
         }
 
         function logout() {
+            if(currentUser && currentUser.token) {
+                fetch(`${API}/logout`, {
+                    method: 'POST',
+                    headers: { 'x-auth-token': currentUser.token }
+                });
+            }
             currentUser = null;
             localStorage.removeItem('userSession');
             updateAuthUI();
@@ -426,30 +439,30 @@
             }
         }
 
-        // --- CHANGE PASSWORD (UPDATED) ---
+        // --- CHANGE PASSWORD ---
         async function changePassword() {
             const oldP = document.getElementById('oldPass').value;
             const newP = document.getElementById('newPass').value;
             
             if(!oldP || !newP) return alert('Please enter both old and new passwords');
 
-            const res = await fetch(`${API}/change-password`, {
-                method:'POST', 
-                headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
-                body:JSON.stringify({oldPassword: oldP, newPassword: newP})
-            });
+            try {
+                const res = await fetch(`${API}/change-password`, {
+                    method:'POST', 
+                    headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
+                    body:JSON.stringify({oldPassword: oldP, newPassword: newP})
+                });
 
-            if(res.ok) { 
-                alert('Password updated successfully'); 
-                closeModal('pwdModal'); 
-                // Clear inputs
-                document.getElementById('oldPass').value = '';
-                document.getElementById('newPass').value = '';
-            }
-            else { 
-                const data = await res.json();
-                alert(data.error || 'Failed to update password'); 
-            }
+                if(res.ok) { 
+                    alert('Password updated successfully'); 
+                    closeModal('pwdModal'); 
+                    document.getElementById('oldPass').value = '';
+                    document.getElementById('newPass').value = '';
+                } else { 
+                    const data = await res.json();
+                    alert(data.error || 'Failed to update password'); 
+                }
+            } catch(e) { alert("Network error"); }
         }
 
         // --- FILE ACTIONS ---
@@ -458,12 +471,14 @@
             if(!file) return;
 
             // Check duplicate
-            const check = await fetch(`${API}/check-duplicate`, {
-                method:'POST', headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
-                body:JSON.stringify({subject:currentUser.subject, filename:file.name})
-            });
-            const d = await check.json();
-            if(d.exists && !confirm('File exists. Overwrite?')) { input.value = ''; return; }
+            try {
+                const check = await fetch(`${API}/check-duplicate`, {
+                    method:'POST', headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
+                    body:JSON.stringify({subject:currentUser.subject, filename:file.name})
+                });
+                const d = await check.json();
+                if(d.exists && !confirm('File already exists. Overwrite?')) { input.value = ''; return; }
+            } catch(e) { console.log("Dup check skipped"); }
 
             const form = new FormData();
             form.append('subject', currentUser.subject);
@@ -477,22 +492,33 @@
                 const res = await fetch(`${API}/upload`, {
                     method:'POST', headers:{'x-auth-token':currentUser.token}, body:form
                 });
+                const result = await res.json();
                 if(res.ok) {
                     pBar.style.width = '100%';
                     setTimeout(() => { pWrap.style.display = 'none'; pBar.style.width = '0'; }, 800);
                     fetchFiles();
-                } else { alert('Upload failed'); }
-            } catch(e) { alert('Error uploading'); }
+                    alert("Upload Successful!");
+                } else { 
+                    alert(result.error || 'Upload failed'); 
+                    pWrap.style.display = 'none';
+                }
+            } catch(e) { alert('Error uploading'); pWrap.style.display = 'none'; }
             input.value = '';
         }
 
         async function deleteFile(sub, name) {
             if(!confirm('Delete this file?')) return;
-            const res = await fetch(`${API}/file`, {
-                method:'DELETE', headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
-                body:JSON.stringify({subject:sub, filename:name})
-            });
-            if(res.ok) fetchFiles();
+            try {
+                const res = await fetch(`${API}/file`, {
+                    method:'DELETE', headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
+                    body:JSON.stringify({subject:sub, filename:name})
+                });
+                if(res.ok) {
+                    fetchFiles();
+                } else {
+                    alert('Failed to delete');
+                }
+            } catch(e) { alert('Network Error'); }
         }
 
         function openRename(oldName) {
@@ -513,27 +539,29 @@
                 return;
             }
 
-            const res = await fetch(`${API}/rename`, {
-                method:'POST', headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
-                body:JSON.stringify({subject:currentUser.subject, oldName:oldN, newName:newN})
-            });
+            try {
+                const res = await fetch(`${API}/rename`, {
+                    method:'POST', headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
+                    body:JSON.stringify({subject:currentUser.subject, oldName:oldN, newName:newN})
+                });
 
-            if(res.ok) { closeModal('renameModal'); fetchFiles(); }
-            else { alert((await res.json()).error); }
+                if(res.ok) { closeModal('renameModal'); fetchFiles(); }
+                else { alert((await res.json()).error); }
+            } catch(e) { alert("Network Error"); }
         }
 
         // --- UTILS ---
         function openModal(id) { document.getElementById(id).classList.add('open'); }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
         function getIcon(t) {
+            t = t.toLowerCase();
             if(t.includes('pdf')) return 'fa-file-pdf';
             if(t.includes('doc')) return 'fa-file-word';
             if(t.includes('ppt')) return 'fa-file-powerpoint';
-            if(t.includes('image')) return 'fa-file-image';
+            if(t.includes('jpg') || t.includes('png')) return 'fa-file-image';
+            if(t.includes('zip') || t.includes('rar')) return 'fa-file-zipper';
             return 'fa-file';
         }
     </script>
-    <script src="toast.js"></script>
-
 </body>
 </html>
