@@ -3,387 +3,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Academic Study Portal</title>
+    <title>College Study Portal</title>
     <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- THEME VARIABLES --- */
         :root {
-            --primary: #4F46E5;
-            --primary-hover: #4338ca;
-            --bg-body: #F3F4F6;
-            --bg-card: #FFFFFF;
-            --text-main: #1F2937;
-            --text-sub: #6B7280;
-            --border: #E5E7EB;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            --modal-bg: rgba(0,0,0,0.5);
-            
-            /* Subject Colors */
-            --ai: #EF4444; --os: #F59E0B; --no: #10B981; 
-            --pm: #8B5CF6; --jp: #EC4899; --cl: #06B6D4;
+            --primary: #2563eb;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text: #1e293b;
         }
 
         [data-theme="dark"] {
-            --bg-body: #0F172A;
-            --bg-card: #1E293B;
-            --text-main: #F1F5F9;
-            --text-sub: #94A3B8;
-            --border: #334155;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            --modal-bg: rgba(0,0,0,0.7);
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --text: #f1f5f9;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        
-        body {
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            transition: background-color 0.3s, color 0.3s;
-            min-height: 100vh;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--bg); color: var(--text); padding-bottom: 50px; }
 
-        /* --- NAVBAR --- */
+        /* Navbar */
         .navbar {
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
+            background: var(--surface); padding: 1rem 2rem;
             display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             position: sticky; top: 0; z-index: 100;
         }
-        .logo { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
-        .logo i { color: var(--primary); }
-        
-        .nav-controls { display: flex; gap: 1rem; align-items: center; }
-        
-        /* --- BUTTONS --- */
+        .logo { font-weight: 700; font-size: 1.2rem; color: var(--primary); }
         .btn {
-            padding: 0.5rem 1rem; border-radius: 8px; border: none; cursor: pointer;
-            font-weight: 600; font-size: 0.9rem; transition: 0.2s;
-            display: inline-flex; align-items: center; gap: 0.5rem;
-            text-decoration: none;
+            padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.9rem;
+            transition: 0.2s;
         }
         .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-hover); }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
-        .btn-outline:hover { background: var(--border); }
-        .btn-danger { background: #fee2e2; color: #dc2626; }
-        .btn-danger:hover { background: #fecaca; }
-        
-        /* --- CONTAINER --- */
-        .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+        .btn-outline { border: 1px solid #cbd5e1; background: transparent; color: var(--text); }
+        .btn-danger { background: #ef4444; color: white; }
 
-        /* --- HEADER & SEARCH --- */
-        .header-area { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-        .search-box { position: relative; width: 300px; }
-        .search-box i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
+        /* Container */
+        .container { max-width: 1100px; margin: 2rem auto; padding: 0 1rem; }
+
+        /* Banner */
+        .banner {
+            background: linear-gradient(135deg, #4f46e5, #3b82f6);
+            color: white; padding: 2rem; border-radius: 12px;
+            display: none; justify-content: space-between; align-items: center; margin-bottom: 2rem;
+        }
+
+        /* Search */
+        .search-area { margin-bottom: 2rem; }
         .search-input {
-            width: 100%; padding: 0.8rem 1rem 0.8rem 2.5rem;
-            border-radius: 12px; border: 1px solid var(--border);
-            background: var(--bg-card); color: var(--text-main);
-            outline: none; transition: 0.2s;
+            width: 100%; padding: 12px 15px; border-radius: 8px; border: 1px solid #cbd5e1;
+            font-size: 1rem; outline: none;
         }
-        .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); }
 
-        /* --- FACULTY BANNER --- */
-        .faculty-banner {
-            background: linear-gradient(135deg, var(--primary), #818cf8);
-            border-radius: 16px; padding: 1.5rem; color: white;
-            margin-bottom: 2rem; display: none; /* Hidden by default */
-            justify-content: space-between; align-items: center;
-            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
-        }
-        .upload-area { display: flex; gap: 10px; align-items: center; }
-
-        /* --- GRID --- */
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; }
-        
+        /* Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
         .card {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 16px; overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
+            background: var(--surface); border-radius: 12px; padding: 1rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-        
-        .card-header {
-            padding: 1.25rem; border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between;
-            cursor: pointer; background: rgba(0,0,0,0.02);
-        }
-        .card-title { font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; }
-
-        .file-list { display: none; max-height: 400px; overflow-y: auto; }
-        .card.active .file-list { display: block; }
-        
+        .card-header { font-weight: 600; padding-bottom: 0.5rem; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; }
+        .file-list { margin-top: 1rem; max-height: 300px; overflow-y: auto; }
         .file-item {
-            padding: 1rem; border-bottom: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center;
+            padding: 0.8rem 0; border-bottom: 1px solid #f1f5f9;
         }
-        .file-item:last-child { border-bottom: none; }
-        .file-item:hover { background: rgba(0,0,0,0.02); }
-        
-        .file-info { display: flex; align-items: center; gap: 1rem; }
-        .file-icon { font-size: 1.2rem; color: var(--text-sub); width: 30px; text-align: center; }
-        .file-name { font-weight: 500; color: var(--text-main); text-decoration: none; display: block; }
-        .file-name:hover { color: var(--primary); text-decoration: underline; }
-        .file-meta { font-size: 0.75rem; color: var(--text-sub); margin-top: 2px; }
+        .file-name { font-size: 0.9rem; color: var(--primary); text-decoration: none; font-weight: 500; display: block; max-width: 180px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+        .file-meta { font-size: 0.75rem; color: #64748b; }
 
-        .action-btns { display: flex; gap: 5px; }
-
-        /* --- MODAL --- */
+        /* Modal */
         .modal {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--modal-bg); z-index: 1000;
-            display: none; justify-content: center; align-items: center;
-            backdrop-filter: blur(5px);
+            background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000;
         }
         .modal.open { display: flex; }
-        .modal-content {
-            background: var(--bg-card); padding: 2rem; border-radius: 16px;
-            width: 90%; max-width: 400px; position: relative;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-            border: 1px solid var(--border);
-        }
+        .modal-box { background: var(--surface); padding: 2rem; border-radius: 12px; width: 350px; }
         .input-group { margin-bottom: 1rem; }
-        .input-label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-sub); }
-        .input-field { width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); outline: none; }
+        .input-group label { display: block; font-size: 0.8rem; margin-bottom: 5px; }
+        .input-group input { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
 
-        /* Progress Bar */
-        .progress-wrapper { width: 100%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin-top: 10px; display: none; }
-        .progress-bar { width: 0%; height: 100%; background: white; border-radius: 2px; transition: width 0.2s; }
-        
-        /* Utility */
-        .hidden { display: none !important; }
-        .text-truncate { max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
     </style>
 </head>
 <body>
 
-    <!-- NAVBAR -->
     <nav class="navbar">
-        <div class="logo"><i class="fa-solid fa-shapes"></i> StudyPortal</div>
-        <div class="nav-controls">
-            <button class="btn btn-outline" onclick="toggleTheme()" id="themeBtn"><i class="fa-solid fa-moon"></i></button>
-            <div id="authBtnArea">
+        <div class="logo">📚 CSE-7 Portal</div>
+        <div style="display: flex; gap: 10px;">
+            <button class="btn btn-outline" onclick="toggleTheme()">Theme</button>
+            <div id="authArea">
                 <button class="btn btn-primary" onclick="openModal('loginModal')">Faculty Login</button>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <!-- DASHBOARD BANNER -->
-        <div id="facultyBanner" class="faculty-banner">
+        
+        <!-- Faculty Dashboard -->
+        <div id="facultyBanner" class="banner">
             <div>
-                <h2 style="font-size:1.2rem;">Welcome, <span id="facultyName">Prof</span></h2>
-                <p style="opacity:0.9; font-size:0.9rem;">Subject: <strong id="facultySubject"></strong></p>
-                <div class="progress-wrapper" id="progressWrapper">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
+                <h2>Welcome, <span id="userSubject"></span></h2>
+                <p>Faculty Dashboard</p>
             </div>
-            <div class="upload-area">
-                <button class="btn" style="background: white; color: var(--primary);" onclick="document.getElementById('fileInput').click()">
-                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload
+            <div>
+                <input type="file" id="fileInput" hidden onchange="handleUpload(this)">
+                <button class="btn" style="background: white; color: var(--primary)" onclick="document.getElementById('fileInput').click()">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload File
                 </button>
-                <input type="file" id="fileInput" class="hidden" onchange="handleUpload(this)">
             </div>
         </div>
 
-        <!-- SEARCH & HEADER -->
-        <div class="header-area">
-            <div>
-                <h1>Materials Library</h1>
-                <p style="color:var(--text-sub)">Access your course documents anytime.</p>
-            </div>
-            <div class="search-box">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" class="search-input" id="searchInput" placeholder="Search topics or files..." oninput="renderFiles()">
-            </div>
+        <div class="search-area">
+            <input type="text" id="search" class="search-input" placeholder="Search for notes, books, or subjects..." oninput="renderFiles()">
         </div>
 
-        <!-- GRID -->
-        <div class="grid" id="materialsGrid">
-            <!-- Injected by JS -->
-            <p style="color:var(--text-sub)">Loading materials...</p>
+        <div id="materialsGrid" class="grid">
+            <!-- Files Load Here -->
         </div>
+
     </div>
 
-    <!-- MODAL: LOGIN -->
-    <div class="modal" id="loginModal">
-        <div class="modal-content">
-            <h3 style="margin-bottom:1rem;">Faculty Access</h3>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-box">
+            <h3>Faculty Login</h3>
             <div class="input-group">
-                <label class="input-label">Username</label>
-                <input type="text" id="loginUser" class="input-field">
+                <label>Username</label>
+                <input type="text" id="loginUser">
             </div>
             <div class="input-group">
-                <label class="input-label">Password</label>
-                <input type="password" id="loginPass" class="input-field">
+                <label>Password</label>
+                <input type="password" id="loginPass">
             </div>
-            <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <div style="text-align: right; gap: 5px; display: flex; justify-content: flex-end;">
                 <button class="btn btn-outline" onclick="closeModal('loginModal')">Cancel</button>
                 <button class="btn btn-primary" onclick="login()">Login</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: CHANGE PASSWORD -->
-    <div class="modal" id="pwdModal">
-        <div class="modal-content">
-            <h3 style="margin-bottom:1rem;">Update Password</h3>
+    <!-- Password Modal -->
+    <div id="pwdModal" class="modal">
+        <div class="modal-box">
+            <h3>Change Password</h3>
             <div class="input-group">
-                <label class="input-label">Old Password</label>
-                <input type="password" id="oldPass" class="input-field">
+                <label>Old Password</label>
+                <input type="password" id="oldPass">
             </div>
             <div class="input-group">
-                <label class="input-label">New Password</label>
-                <input type="password" id="newPass" class="input-field">
+                <label>New Password</label>
+                <input type="password" id="newPass">
             </div>
-            <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <div style="text-align: right; gap: 5px; display: flex; justify-content: flex-end;">
                 <button class="btn btn-outline" onclick="closeModal('pwdModal')">Cancel</button>
                 <button class="btn btn-primary" onclick="changePassword()">Update</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: RENAME -->
-    <div class="modal" id="renameModal">
-        <div class="modal-content">
-            <h3 style="margin-bottom:1rem;">Rename File</h3>
-            <input type="hidden" id="renameOld">
-            <div class="input-group">
-                <label class="input-label">Current Name: <span id="renameLabel" style="color:var(--primary)"></span></label>
-            </div>
-            <div class="input-group">
-                <label class="input-label">New Name</label>
-                <input type="text" id="renameNew" class="input-field">
-                <small style="color:var(--ai); display:none;" id="renameError">Extension must match!</small>
-            </div>
-            <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
-                <button class="btn btn-outline" onclick="closeModal('renameModal')">Cancel</button>
-                <button class="btn btn-primary" onclick="confirmRename()">Save</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         const API = '/api';
-        
-        // --- DATA CONFIG ---
-        const subjects = {
-            'Artificial_Intelligence': { name: 'Artificial Intelligence', color: 'var(--ai)' },
-            'Operating_System': { name: 'Operating System', color: 'var(--os)' },
-            'Nosql': { name: 'NoSQL Databases', color: 'var(--no)' },
-            'Probability_Maths': { name: 'Probability & Maths', color: 'var(--pm)' },
-            'Java_Programming': { name: 'Java Programming', color: 'var(--jp)' },
-            'Coding_Lab': { name: 'Coding Lab', color: 'var(--cl)' }
+        const SUBJECTS = {
+            'Artificial_Intelligence': { name: 'Artificial Intelligence', color: '#EF4444' },
+            'Operating_System': { name: 'Operating System', color: '#F59E0B' },
+            'Nosql': { name: 'NoSQL Databases', color: '#10B981' },
+            'Probability_Maths': { name: 'Probability & Maths', color: '#8B5CF6' },
+            'Java_Programming': { name: 'Java Programming', color: '#EC4899' },
+            'Coding_Lab': { name: 'Coding Lab', color: '#06B6D4' }
         };
 
         let fileData = {};
-        let currentUser = JSON.parse(localStorage.getItem('userSession')) || null;
+        let session = JSON.parse(localStorage.getItem('session')) || null;
 
         // --- INIT ---
         window.onload = () => {
-            initTheme();
-            updateAuthUI();
+            checkAuth();
             fetchFiles();
         };
 
-        // --- THEME LOGIC ---
-        function initTheme() {
-            const theme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', theme);
-            updateThemeIcon(theme);
-        }
-
-        function toggleTheme() {
-            const current = document.documentElement.getAttribute('data-theme');
-            const next = current === 'light' ? 'dark' : 'light';
-            document.documentElement.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-            updateThemeIcon(next);
-        }
-
-        function updateThemeIcon(theme) {
-            const btn = document.getElementById('themeBtn');
-            btn.innerHTML = theme === 'light' ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
-        }
-
-        // --- CORE FUNCTIONS ---
+        // --- CORE LOGIC ---
         async function fetchFiles() {
             try {
-                const res = await fetch(`${API}/files`);
+                const res = await fetch(API + '/files');
                 fileData = await res.json();
                 renderFiles();
-            } catch (e) { console.error('Connection Error'); }
+            } catch (err) { console.error(err); }
         }
 
         function renderFiles() {
             const grid = document.getElementById('materialsGrid');
-            const search = document.getElementById('searchInput').value.toLowerCase();
+            const term = document.getElementById('search').value.toLowerCase();
             grid.innerHTML = '';
 
-            let hasFiles = false;
-
-            Object.keys(subjects).forEach(key => {
-                const meta = subjects[key];
+            for (const [key, meta] of Object.entries(SUBJECTS)) {
                 const files = fileData[key] || [];
                 
-                // Filter
-                const filtered = files.filter(f => f.name.toLowerCase().includes(search));
-                const subjectMatch = meta.name.toLowerCase().includes(search);
-                
-                if (search && !subjectMatch && filtered.length === 0) return;
+                // Filter Logic
+                const filtered = files.filter(f => f.name.toLowerCase().includes(term));
+                if (term && !meta.name.toLowerCase().includes(term) && filtered.length === 0) continue;
 
-                hasFiles = true;
-                const displayFiles = search ? filtered : files;
-                const isActive = search ? 'active' : '';
+                const displayFiles = term ? filtered : files;
 
                 const card = document.createElement('div');
-                card.className = `card ${isActive}`;
-                
-                // Card HTML
+                card.className = 'card';
                 card.innerHTML = `
-                    <div class="card-header" onclick="this.parentElement.classList.toggle('active')">
-                        <div class="card-title">
-                            <span class="dot" style="background:${meta.color}"></span>
-                            ${meta.name}
-                        </div>
-                        <i class="fa-solid fa-chevron-down" style="color:var(--text-sub)"></i>
+                    <div class="card-header" style="color:${meta.color}">
+                        ${meta.name}
                     </div>
                     <div class="file-list">
                         ${displayFiles.length ? displayFiles.map(f => `
                             <div class="file-item">
-                                <div class="file-info">
-                                    <div class="file-icon"><i class="fa-solid ${getIcon(f.type || f.name)}"></i></div>
-                                    <div>
-                                        <a href="${API}/file/${key}/${encodeURIComponent(f.name)}?action=preview" target="_blank" class="file-name text-truncate" title="${f.name}">${f.name}</a>
-                                        <div class="file-meta">${f.size} • ${new Date(f.uploadedAt).toLocaleDateString()} • ⬇ ${f.downloads}</div>
-                                    </div>
+                                <div>
+                                    <a href="${API}/file/${key}/${f.name}" target="_blank" class="file-name" title="${f.name}">
+                                        <i class="fa-solid fa-file"></i> ${f.name}
+                                    </a>
+                                    <span class="file-meta">${f.size} • ⬇ ${f.downloads}</span>
                                 </div>
-                                <div class="action-btns">
-                                    <!-- PREVIEW -->
-                                    <a href="${API}/file/${key}/${encodeURIComponent(f.name)}?action=preview" target="_blank" class="btn btn-outline" style="padding:5px 10px" title="Preview"><i class="fa-solid fa-eye"></i></a>
-                                    
-                                    <!-- DOWNLOAD -->
-                                    <a href="${API}/file/${key}/${encodeURIComponent(f.name)}" class="btn btn-outline" style="padding:5px 10px" title="Download"><i class="fa-solid fa-download"></i></a>
-                                    
-                                    ${(currentUser && currentUser.subject === key) ? `
-                                        <button onclick="openRename('${f.name}')" class="btn btn-outline" style="padding:5px 10px"><i class="fa-solid fa-pen"></i></button>
-                                        <button onclick="deleteFile('${key}', '${f.name}')" class="btn btn-danger" style="padding:5px 10px"><i class="fa-solid fa-trash"></i></button>
+                                <div style="display:flex; gap:5px;">
+                                    <a href="${API}/file/${key}/${f.name}" class="btn btn-outline" style="padding:4px 8px;"><i class="fa-solid fa-download"></i></a>
+                                    ${(session && session.subject === key) ? `
+                                        <button onclick="deleteFile('${key}','${f.name}')" class="btn btn-danger" style="padding:4px 8px;"><i class="fa-solid fa-trash"></i></button>
                                     ` : ''}
                                 </div>
                             </div>
-                        `).join('') : '<div style="padding:1rem; text-align:center; color:var(--text-sub); font-size:0.9rem;">No files found.</div>'}
+                        `).join('') : '<small style="color:#94a3b8">No files yet.</small>'}
                     </div>
                 `;
                 grid.appendChild(card);
-            });
-
-            if(!hasFiles) {
-                grid.innerHTML = '<p style="text-align:center; width:100%; color:var(--text-sub)">No results found.</p>';
             }
         }
 
@@ -391,176 +238,126 @@
         async function login() {
             const u = document.getElementById('loginUser').value;
             const p = document.getElementById('loginPass').value;
+
             try {
-                const res = await fetch(`${API}/login`, {
-                    method:'POST', headers:{'Content-Type':'application/json'},
-                    body:JSON.stringify({username:u, password:p})
+                const res = await fetch(API + '/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: u, password: p })
                 });
                 const data = await res.json();
-                if(data.success) {
-                    currentUser = data;
-                    localStorage.setItem('userSession', JSON.stringify(data));
+
+                if (data.success) {
+                    session = data;
+                    localStorage.setItem('session', JSON.stringify(data));
                     closeModal('loginModal');
-                    updateAuthUI();
-                    fetchFiles();
-                } else { alert(data.error || 'Invalid Login'); }
-            } catch(e) { alert('Error logging in'); }
+                    checkAuth();
+                    fetchFiles(); // Refresh to show delete buttons
+                } else {
+                    alert('Login Failed: ' + (data.error || 'Unknown'));
+                }
+            } catch (err) { alert('Server Connection Failed'); }
         }
 
         function logout() {
-            if(currentUser && currentUser.token) {
-                fetch(`${API}/logout`, {
-                    method: 'POST',
-                    headers: { 'x-auth-token': currentUser.token }
-                });
-            }
-            currentUser = null;
-            localStorage.removeItem('userSession');
-            updateAuthUI();
+            if(session) fetch(API + '/logout', { method: 'POST', headers: {'x-auth-token': session.token} });
+            session = null;
+            localStorage.removeItem('session');
+            checkAuth();
             fetchFiles();
         }
 
-        function updateAuthUI() {
-            const navAuth = document.getElementById('authBtnArea');
+        function checkAuth() {
+            const area = document.getElementById('authArea');
             const banner = document.getElementById('facultyBanner');
-            
-            if(currentUser) {
-                navAuth.innerHTML = `
+
+            if (session) {
+                area.innerHTML = `
                     <button class="btn btn-outline" onclick="openModal('pwdModal')">Password</button>
                     <button class="btn btn-danger" onclick="logout()">Logout</button>
                 `;
                 banner.style.display = 'flex';
-                document.getElementById('facultyName').innerText = currentUser.username;
-                document.getElementById('facultySubject').innerText = subjects[currentUser.subject].name;
-                document.getElementById('facultySubject').style.color = subjects[currentUser.subject].color;
+                document.getElementById('userSubject').innerText = SUBJECTS[session.subject].name;
             } else {
-                navAuth.innerHTML = `<button class="btn btn-primary" onclick="openModal('loginModal')">Faculty Login</button>`;
+                area.innerHTML = `<button class="btn btn-primary" onclick="openModal('loginModal')">Faculty Login</button>`;
                 banner.style.display = 'none';
             }
         }
 
-        // --- CHANGE PASSWORD ---
         async function changePassword() {
             const oldP = document.getElementById('oldPass').value;
             const newP = document.getElementById('newPass').value;
-            
-            if(!oldP || !newP) return alert('Please enter both old and new passwords');
+            if(!oldP || !newP) return alert('Fill all fields');
 
-            try {
-                const res = await fetch(`${API}/change-password`, {
-                    method:'POST', 
-                    headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
-                    body:JSON.stringify({oldPassword: oldP, newPassword: newP})
-                });
+            const res = await fetch(API + '/change-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-auth-token': session.token },
+                body: JSON.stringify({ oldPassword: oldP, newPassword: newP })
+            });
 
-                if(res.ok) { 
-                    alert('Password updated successfully'); 
-                    closeModal('pwdModal'); 
-                    document.getElementById('oldPass').value = '';
-                    document.getElementById('newPass').value = '';
-                } else { 
-                    const data = await res.json();
-                    alert(data.error || 'Failed to update password'); 
-                }
-            } catch(e) { alert("Network error"); }
+            if(res.ok) {
+                alert('Password Changed!');
+                closeModal('pwdModal');
+            } else {
+                alert('Failed to change password');
+            }
         }
 
-        // --- FILE ACTIONS ---
+        // --- UPLOAD / DELETE ---
         async function handleUpload(input) {
+            if (!input.files[0]) return;
             const file = input.files[0];
-            if(!file) return;
 
-            // Check duplicate
-            try {
-                const check = await fetch(`${API}/check-duplicate`, {
-                    method:'POST', headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
-                    body:JSON.stringify({subject:currentUser.subject, filename:file.name})
-                });
-                const d = await check.json();
-                if(d.exists && !confirm('File already exists. Overwrite?')) { input.value = ''; return; }
-            } catch(e) { console.log("Dup check skipped"); }
+            // Duplicate Check
+            const check = await fetch(API + '/check-duplicate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'x-auth-token': session.token },
+                body: JSON.stringify({ subject: session.subject, filename: file.name })
+            });
+            const d = await check.json();
+            if (d.exists && !confirm('File exists. Overwrite?')) { input.value = ''; return; }
 
-            const form = new FormData();
-            form.append('subject', currentUser.subject);
-            form.append('file', file);
+            // Upload
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('subject', session.subject);
 
-            const pBar = document.getElementById('progressBar');
-            const pWrap = document.getElementById('progressWrapper');
-            pWrap.style.display = 'block'; pBar.style.width = '30%';
+            const res = await fetch(API + '/upload', {
+                method: 'POST',
+                headers: { 'x-auth-token': session.token },
+                body: formData
+            });
 
-            try {
-                const res = await fetch(`${API}/upload`, {
-                    method:'POST', headers:{'x-auth-token':currentUser.token}, body:form
-                });
-                const result = await res.json();
-                if(res.ok) {
-                    pBar.style.width = '100%';
-                    setTimeout(() => { pWrap.style.display = 'none'; pBar.style.width = '0'; }, 800);
-                    fetchFiles();
-                    alert("Upload Successful!");
-                } else { 
-                    alert(result.error || 'Upload failed'); 
-                    pWrap.style.display = 'none';
-                }
-            } catch(e) { alert('Error uploading'); pWrap.style.display = 'none'; }
+            if (res.ok) {
+                alert('Upload Success!');
+                fetchFiles();
+            } else {
+                const err = await res.json();
+                alert('Upload Failed: ' + err.error);
+            }
             input.value = '';
         }
 
         async function deleteFile(sub, name) {
-            if(!confirm('Delete this file?')) return;
-            try {
-                const res = await fetch(`${API}/file`, {
-                    method:'DELETE', headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
-                    body:JSON.stringify({subject:sub, filename:name})
-                });
-                if(res.ok) {
-                    fetchFiles();
-                } else {
-                    alert('Failed to delete');
-                }
-            } catch(e) { alert('Network Error'); }
+            if (!confirm('Delete ' + name + '?')) return;
+            const res = await fetch(API + '/file', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json', 'x-auth-token': session.token },
+                body: JSON.stringify({ subject: sub, filename: name })
+            });
+
+            if (res.ok) fetchFiles();
+            else alert('Delete Failed');
         }
 
-        function openRename(oldName) {
-            document.getElementById('renameOld').value = oldName;
-            document.getElementById('renameLabel').innerText = oldName;
-            document.getElementById('renameNew').value = oldName;
-            document.getElementById('renameError').style.display = 'none';
-            openModal('renameModal');
-        }
-
-        async function confirmRename() {
-            const oldN = document.getElementById('renameOld').value;
-            const newN = document.getElementById('renameNew').value;
-            
-            // Client validation
-            if(oldN.split('.').pop() !== newN.split('.').pop()){
-                document.getElementById('renameError').style.display = 'block';
-                return;
-            }
-
-            try {
-                const res = await fetch(`${API}/rename`, {
-                    method:'POST', headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
-                    body:JSON.stringify({subject:currentUser.subject, oldName:oldN, newName:newN})
-                });
-
-                if(res.ok) { closeModal('renameModal'); fetchFiles(); }
-                else { alert((await res.json()).error); }
-            } catch(e) { alert("Network Error"); }
-        }
-
-        // --- UTILS ---
+        // --- UI UTILS ---
         function openModal(id) { document.getElementById(id).classList.add('open'); }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-        function getIcon(t) {
-            t = t.toLowerCase();
-            if(t.includes('pdf')) return 'fa-file-pdf';
-            if(t.includes('doc')) return 'fa-file-word';
-            if(t.includes('ppt')) return 'fa-file-powerpoint';
-            if(t.includes('jpg') || t.includes('png')) return 'fa-file-image';
-            if(t.includes('zip') || t.includes('rar')) return 'fa-file-zipper';
-            return 'fa-file';
+        function toggleTheme() {
+            const body = document.body;
+            const current = document.documentElement.getAttribute('data-theme');
+            const next = current === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-theme', next);
         }
     </script>
 </body>
