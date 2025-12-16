@@ -1,3 +1,7 @@
+/**
+ * server.js - Backend for Study Material Portal
+ * Fixed: Crash Proof, Stable Frontend Loading
+ */
 const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
@@ -47,7 +51,9 @@ if (!fs.existsSync(USERS_FILE)) {
 }
 
 // Create Metadata
-if (!fs.existsSync(META_FILE)) fs.writeFileSync(META_FILE, JSON.stringify({}));
+if (!fs.existsSync(META_FILE)) {
+  fs.writeFileSync(META_FILE, JSON.stringify({}));
+}
 
 // --- MIDDLEWARE ---
 app.use(cors());
@@ -90,7 +96,7 @@ const upload = multer({ storage, limits: { fileSize: 50 * 1024 * 1024 } });
 
 // --- API ROUTES ---
 
-// Login
+// 1. Login
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
   const users = getUsers();
@@ -101,14 +107,14 @@ app.post('/api/login', (req, res) => {
   res.json({ success: true, token, subject: user.subject, username: user.username });
 });
 
-// Logout
+// 2. Logout
 app.post('/api/logout', (req, res) => {
     const token = req.headers['x-auth-token'];
     if(token) delete sessions[token];
     res.json({ success: true });
 });
 
-// Get Files
+// 3. Get Files
 app.get('/api/files', (req, res) => {
   const metadata = getMetadata();
   const result = {};
@@ -133,7 +139,7 @@ app.get('/api/files', (req, res) => {
   res.json(result);
 });
 
-// Check Duplicate
+// 5. Check Duplicate
 app.post('/api/check-duplicate', requireAuth, (req, res) => {
     const { subject, filename } = req.body;
     if (req.user.subject !== subject) return res.status(403).json({ error: 'Subject mismatch' });
@@ -141,7 +147,7 @@ app.post('/api/check-duplicate', requireAuth, (req, res) => {
     res.json({ exists: fs.existsSync(filePath) });
 });
 
-// Upload
+// 6. Upload
 app.post('/api/upload', requireAuth, upload.single('file'), (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
     if (req.user.subject !== req.body.subject) {
@@ -155,7 +161,7 @@ app.post('/api/upload', requireAuth, upload.single('file'), (req, res) => {
     res.json({ success: true });
 });
 
-// Download
+// 4. Download
 app.get('/api/file/:subject/:filename', (req, res) => {
     const filePath = path.join(DATA_DIR, req.params.subject, req.params.filename);
     if (!fs.existsSync(filePath)) return res.status(404).send('File not found');
@@ -169,7 +175,7 @@ app.get('/api/file/:subject/:filename', (req, res) => {
     res.sendFile(filePath);
 });
 
-// Delete
+// 7. Delete
 app.delete('/api/file', requireAuth, (req, res) => {
     const { subject, filename } = req.body;
     if (req.user.subject !== subject) return res.status(403).json({ error: 'Permission Denied' });
@@ -180,7 +186,7 @@ app.delete('/api/file', requireAuth, (req, res) => {
     } else { res.status(404).json({ error: 'File not found' }); }
 });
 
-// Rename
+// 8. Rename
 app.post('/api/rename', requireAuth, (req, res) => {
     const { subject, oldName, newName } = req.body;
     if (req.user.subject !== subject) return res.status(403).json({ error: 'Permission Denied' });
@@ -192,7 +198,7 @@ app.post('/api/rename', requireAuth, (req, res) => {
     res.json({ success: true });
 });
 
-// Change Password
+// 9. Change Password
 app.post('/api/change-password', requireAuth, (req, res) => {
     const { oldPassword, newPassword } = req.body;
     const users = getUsers();
@@ -205,9 +211,9 @@ app.post('/api/change-password', requireAuth, (req, res) => {
 });
 
 // 👇👇👇 THE CRITICAL FIX 👇👇👇
-// This replaces app.get('*') which caused your crash
-// It ensures your frontend loads if the user refreshes the page
-aapp.use((req, res) => {
+// We use 'app.use' (not app.get) so it works on ALL versions without crashing.
+// This ensures your frontend is always reachable.
+app.use((req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
