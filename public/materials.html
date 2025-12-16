@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- YOUR ORIGINAL DESIGN & CSS -->
+    <!-- Keeps your original styling -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academic Study Portal</title>
@@ -9,37 +9,53 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- YOUR EXACT CSS --- */
+        /* --- THEME VARIABLES --- */
         :root {
-            --primary: #4F46E5; --primary-hover: #4338ca; --bg-body: #F3F4F6;
-            --bg-card: #FFFFFF; --text-main: #1F2937; --text-sub: #6B7280;
-            --border: #E5E7EB; --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --primary: #4F46E5;
+            --primary-hover: #4338ca;
+            --bg-body: #F3F4F6;
+            --bg-card: #FFFFFF;
+            --text-main: #1F2937;
+            --text-sub: #6B7280;
+            --border: #E5E7EB;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             --modal-bg: rgba(0,0,0,0.5);
+            
+            /* Subject Colors */
             --ai: #EF4444; --os: #F59E0B; --no: #10B981; 
             --pm: #8B5CF6; --jp: #EC4899; --cl: #06B6D4;
         }
 
         [data-theme="dark"] {
-            --bg-body: #0F172A; --bg-card: #1E293B; --text-main: #F1F5F9;
-            --text-sub: #94A3B8; --border: #334155; --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --bg-body: #0F172A;
+            --bg-card: #1E293B;
+            --text-main: #F1F5F9;
+            --text-sub: #94A3B8;
+            --border: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
             --modal-bg: rgba(0,0,0,0.7);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
         
         body {
-            background-color: var(--bg-body); color: var(--text-main);
-            transition: background-color 0.3s, color 0.3s; min-height: 100vh;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
         }
 
         /* --- NAVBAR --- */
         .navbar {
-            background: var(--bg-card); border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+            display: flex; justify-content: space-between; align-items: center;
             position: sticky; top: 0; z-index: 100;
         }
         .logo { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
         .logo i { color: var(--primary); }
+        
         .nav-controls { display: flex; gap: 1rem; align-items: center; }
         
         /* --- BUTTONS --- */
@@ -57,6 +73,8 @@
         
         /* --- CONTAINER --- */
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
+
+        /* --- HEADER & SEARCH --- */
         .header-area { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
         .search-box { position: relative; width: 300px; }
         .search-box i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
@@ -72,7 +90,8 @@
         .faculty-banner {
             background: linear-gradient(135deg, var(--primary), #818cf8);
             border-radius: 16px; padding: 1.5rem; color: white;
-            margin-bottom: 2rem; display: none; justify-content: space-between; align-items: center;
+            margin-bottom: 2rem; display: none; /* Hidden by default */
+            justify-content: space-between; align-items: center;
             box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
         }
         .upload-area { display: flex; gap: 10px; align-items: center; }
@@ -104,11 +123,13 @@
         }
         .file-item:last-child { border-bottom: none; }
         .file-item:hover { background: rgba(0,0,0,0.02); }
+        
         .file-info { display: flex; align-items: center; gap: 1rem; }
         .file-icon { font-size: 1.2rem; color: var(--text-sub); width: 30px; text-align: center; }
         .file-name { font-weight: 500; color: var(--text-main); text-decoration: none; display: block; }
         .file-name:hover { color: var(--primary); text-decoration: underline; }
         .file-meta { font-size: 0.75rem; color: var(--text-sub); margin-top: 2px; }
+
         .action-btns { display: flex; gap: 5px; }
 
         /* --- MODAL --- */
@@ -122,7 +143,8 @@
         .modal-content {
             background: var(--bg-card); padding: 2rem; border-radius: 16px;
             width: 90%; max-width: 400px; position: relative;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); border: 1px solid var(--border);
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
         }
         .input-group { margin-bottom: 1rem; }
         .input-label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-sub); }
@@ -132,6 +154,7 @@
         .progress-wrapper { width: 100%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin-top: 10px; display: none; }
         .progress-bar { width: 0%; height: 100%; background: white; border-radius: 2px; transition: width 0.2s; }
         
+        /* Utility */
         .hidden { display: none !important; }
         .text-truncate { max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
     </style>
@@ -181,6 +204,7 @@
 
         <!-- GRID -->
         <div class="grid" id="materialsGrid">
+            <!-- Injected by JS -->
             <p style="color:var(--text-sub)">Loading...</p>
         </div>
     </div>
@@ -244,9 +268,9 @@
     </div>
 
     <script>
-        // 👉 UPDATED: Use Relative path so Frontend + Backend work together seamlessly
         const API = '/api';
         
+        // Match these KEYS exactly with 'server.js'
         const subjects = {
             'Artificial_Intelligence': { name: 'Artificial Intelligence', color: 'var(--ai)' },
             'Operating_System': { name: 'Operating System', color: 'var(--os)' },
@@ -265,6 +289,7 @@
             fetchFiles();
         };
 
+        // --- THEME ---
         function initTheme() {
             const theme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', theme);
@@ -284,17 +309,13 @@
             btn.innerHTML = theme === 'light' ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
         }
 
+        // --- CORE ---
         async function fetchFiles() {
             try {
                 const res = await fetch(`${API}/files`);
-                if(!res.ok) throw new Error("Server Error");
                 fileData = await res.json();
                 renderFiles();
-            } catch (e) { 
-                console.error(e);
-                // If it fails, wait 2 seconds and try again (Self-Healing)
-                setTimeout(fetchFiles, 2000);
-            }
+            } catch (e) { console.error(e); }
         }
 
         function renderFiles() {
@@ -315,7 +336,7 @@
 
                 hasFiles = true;
                 const displayFiles = search ? filtered : files;
-                const isActive = search ? 'active' : '';
+                const isActive = search ? 'active' : ''; // Open cards if searching
 
                 const card = document.createElement('div');
                 card.className = `card ${isActive}`;
@@ -357,6 +378,7 @@
             if(!hasFiles) grid.innerHTML = '<p style="text-align:center;width:100%;color:var(--text-sub)">No results.</p>';
         }
 
+        // --- AUTH ---
         async function login() {
             const u = document.getElementById('loginUser').value;
             const p = document.getElementById('loginPass').value;
@@ -402,24 +424,25 @@
             }
         }
 
+        // --- UPLOAD (FIXED FOR "INVALID SUBJECT" ERROR) ---
         async function handleUpload(input) {
             const file = input.files[0];
             if(!file) return;
 
-            // Check duplicate logic kept same
+            // 1. Check Duplicate
             try {
-                const check = await fetch(`${API}/check-duplicate`, { // Note: If this route is missing in backend, you can remove this check or add route
+                const check = await fetch(`${API}/check-duplicate`, {
                     method:'POST', 
                     headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
                     body:JSON.stringify({subject:currentUser.subject, filename:file.name})
                 });
-                if(check.ok) {
-                    const d = await check.json();
-                    if(d.exists && !confirm('File exists. Overwrite?')) { input.value = ''; return; }
-                }
-            } catch(e) { }
+                const d = await check.json();
+                if(d.exists && !confirm('File exists. Overwrite?')) { input.value = ''; return; }
+            } catch(e) { console.log("Dup check failed"); }
 
+            // 2. Prepare Upload
             const formData = new FormData();
+            // CRITICAL: Append 'subject' BEFORE 'file'
             formData.append('subject', currentUser.subject); 
             formData.append('file', file);
 
@@ -429,7 +452,9 @@
 
             try {
                 const res = await fetch(`${API}/upload`, {
-                    method:'POST', headers:{'x-auth-token':currentUser.token}, body:formData
+                    method:'POST', 
+                    headers:{'x-auth-token':currentUser.token}, // No Content-Type for FormData!
+                    body:formData
                 });
                 const result = await res.json();
                 
@@ -439,7 +464,7 @@
                     fetchFiles();
                     alert("Upload Successful!");
                 } else {
-                    alert("Upload Failed: " + (result.error || "Unknown error"));
+                    alert("Upload Failed: " + result.error);
                     pWrap.style.display = 'none';
                 }
             } catch(e) { alert("Network Error"); pWrap.style.display = 'none'; }
@@ -473,9 +498,19 @@
             else { alert('Failed'); }
         }
 
+        // --- UTILS ---
+        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+        function openRename(oldName) {
+            document.getElementById('renameOld').value = oldName;
+            document.getElementById('renameLabel').innerText = oldName;
+            document.getElementById('renameNew').value = oldName;
+            openModal('renameModal');
+        }
         async function confirmRename() {
             const oldN = document.getElementById('renameOld').value;
             const newN = document.getElementById('renameNew').value;
+            // validation
             if(oldN.split('.').pop() !== newN.split('.').pop()) return alert("Extension mismatch");
             
             const res = await fetch(`${API}/rename`, {
@@ -485,15 +520,6 @@
             });
             if(res.ok) { closeModal('renameModal'); fetchFiles(); }
             else alert("Rename failed");
-        }
-
-        function openModal(id) { document.getElementById(id).classList.add('open'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-        function openRename(oldName) {
-            document.getElementById('renameOld').value = oldName;
-            document.getElementById('renameLabel').innerText = oldName;
-            document.getElementById('renameNew').value = oldName;
-            openModal('renameModal');
         }
 
         function getIcon(t) {
