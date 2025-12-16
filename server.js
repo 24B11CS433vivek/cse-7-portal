@@ -207,7 +207,7 @@ app.post('/api/change-password', requireAuth, (req, res) => {
 // 👇👇👇 THE CRITICAL FIX 👇👇👇
 // This replaces app.get('*') which caused your crash
 // It ensures your frontend loads if the user refreshes the page
-app.get('/(.*)', (req, res) => {
+aapp.use((req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
