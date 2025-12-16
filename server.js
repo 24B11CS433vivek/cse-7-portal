@@ -214,7 +214,7 @@ app.post('/api/logout', (req, res) => {
 
 // 👉 CATCH-ALL: This makes the frontend load properly
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'materials.html'));
 });
 
 app.listen(PORT, () => {
