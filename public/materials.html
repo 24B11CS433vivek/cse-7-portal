@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Keeps your original styling -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Academic Study Portal</title>
@@ -9,61 +8,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        /* --- THEME VARIABLES --- */
+        /* --- YOUR ORIGINAL THEME & CSS --- */
         :root {
-            --primary: #4F46E5;
-            --primary-hover: #4338ca;
-            --bg-body: #F3F4F6;
-            --bg-card: #FFFFFF;
-            --text-main: #1F2937;
-            --text-sub: #6B7280;
-            --border: #E5E7EB;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --primary: #4F46E5; --primary-hover: #4338ca; --bg-body: #F3F4F6;
+            --bg-card: #FFFFFF; --text-main: #1F2937; --text-sub: #6B7280;
+            --border: #E5E7EB; --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
             --modal-bg: rgba(0,0,0,0.5);
-            
-            /* Subject Colors */
             --ai: #EF4444; --os: #F59E0B; --no: #10B981; 
             --pm: #8B5CF6; --jp: #EC4899; --cl: #06B6D4;
         }
 
         [data-theme="dark"] {
-            --bg-body: #0F172A;
-            --bg-card: #1E293B;
-            --text-main: #F1F5F9;
-            --text-sub: #94A3B8;
-            --border: #334155;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-            --modal-bg: rgba(0,0,0,0.7);
+            --bg-body: #0F172A; --bg-card: #1E293B; --text-main: #F1F5F9;
+            --text-sub: #94A3B8; --border: #334155; --modal-bg: rgba(0,0,0,0.7);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        
-        body {
-            background-color: var(--bg-body);
-            color: var(--text-main);
-            transition: background-color 0.3s, color 0.3s;
-            min-height: 100vh;
-        }
+        body { background-color: var(--bg-body); color: var(--text-main); transition: background-color 0.3s, color 0.3s; min-height: 100vh; }
 
-        /* --- NAVBAR --- */
-        .navbar {
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border);
-            padding: 1rem 2rem;
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 100;
-        }
+        /* NAVBAR */
+        .navbar { background: var(--bg-card); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         .logo { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
         .logo i { color: var(--primary); }
-        
         .nav-controls { display: flex; gap: 1rem; align-items: center; }
         
-        /* --- BUTTONS --- */
-        .btn {
-            padding: 0.5rem 1rem; border-radius: 8px; border: none; cursor: pointer;
-            font-weight: 600; font-size: 0.9rem; transition: 0.2s;
-            display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none;
-        }
+        /* BUTTONS */
+        .btn { padding: 0.5rem 1rem; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; font-size: 0.9rem; transition: 0.2s; display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:hover { background: var(--primary-hover); }
         .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
@@ -71,90 +41,43 @@
         .btn-danger { background: #fee2e2; color: #dc2626; }
         .btn-danger:hover { background: #fecaca; }
         
-        /* --- CONTAINER --- */
         .container { max-width: 1200px; margin: 2rem auto; padding: 0 1.5rem; }
-
-        /* --- HEADER & SEARCH --- */
         .header-area { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        
+        /* SEARCH */
         .search-box { position: relative; width: 300px; }
         .search-box i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
-        .search-input {
-            width: 100%; padding: 0.8rem 1rem 0.8rem 2.5rem;
-            border-radius: 12px; border: 1px solid var(--border);
-            background: var(--bg-card); color: var(--text-main);
-            outline: none; transition: 0.2s;
-        }
+        .search-input { width: 100%; padding: 0.8rem 1rem 0.8rem 2.5rem; border-radius: 12px; border: 1px solid var(--border); background: var(--bg-card); color: var(--text-main); outline: none; transition: 0.2s; }
         .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.2); }
 
-        /* --- FACULTY BANNER --- */
-        .faculty-banner {
-            background: linear-gradient(135deg, var(--primary), #818cf8);
-            border-radius: 16px; padding: 1.5rem; color: white;
-            margin-bottom: 2rem; display: none; /* Hidden by default */
-            justify-content: space-between; align-items: center;
-            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
-        }
-        .upload-area { display: flex; gap: 10px; align-items: center; }
+        /* BANNER */
+        .faculty-banner { background: linear-gradient(135deg, var(--primary), #818cf8); border-radius: 16px; padding: 1.5rem; color: white; margin-bottom: 2rem; display: none; justify-content: space-between; align-items: center; box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3); }
 
-        /* --- GRID --- */
+        /* GRID */
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; }
-        
-        .card {
-            background: var(--bg-card); border: 1px solid var(--border);
-            border-radius: 16px; overflow: hidden;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
         .card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-        
-        .card-header {
-            padding: 1.25rem; border-bottom: 1px solid var(--border);
-            display: flex; align-items: center; justify-content: space-between;
-            cursor: pointer; background: rgba(0,0,0,0.02);
-        }
+        .card-header { padding: 1.25rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; cursor: pointer; background: rgba(0,0,0,0.02); }
         .card-title { font-weight: 700; display: flex; align-items: center; gap: 0.5rem; }
         .dot { width: 8px; height: 8px; border-radius: 50%; }
 
         .file-list { display: none; max-height: 400px; overflow-y: auto; }
         .card.active .file-list { display: block; }
-        
-        .file-item {
-            padding: 1rem; border-bottom: 1px solid var(--border);
-            display: flex; justify-content: space-between; align-items: center;
-        }
+        .file-item { padding: 1rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
         .file-item:last-child { border-bottom: none; }
-        .file-item:hover { background: rgba(0,0,0,0.02); }
-        
         .file-info { display: flex; align-items: center; gap: 1rem; }
-        .file-icon { font-size: 1.2rem; color: var(--text-sub); width: 30px; text-align: center; }
         .file-name { font-weight: 500; color: var(--text-main); text-decoration: none; display: block; }
         .file-name:hover { color: var(--primary); text-decoration: underline; }
         .file-meta { font-size: 0.75rem; color: var(--text-sub); margin-top: 2px; }
 
-        .action-btns { display: flex; gap: 5px; }
-
-        /* --- MODAL --- */
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--modal-bg); z-index: 1000;
-            display: none; justify-content: center; align-items: center;
-            backdrop-filter: blur(5px);
-        }
+        /* MODAL */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-bg); z-index: 1000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
         .modal.open { display: flex; }
-        .modal-content {
-            background: var(--bg-card); padding: 2rem; border-radius: 16px;
-            width: 90%; max-width: 400px; position: relative;
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
-            border: 1px solid var(--border);
-        }
+        .modal-content { background: var(--bg-card); padding: 2rem; border-radius: 16px; width: 90%; max-width: 400px; position: relative; border: 1px solid var(--border); }
         .input-group { margin-bottom: 1rem; }
         .input-label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-sub); }
         .input-field { width: 100%; padding: 0.7rem; border-radius: 8px; border: 1px solid var(--border); background: var(--bg-body); color: var(--text-main); outline: none; }
 
-        /* Progress Bar */
-        .progress-wrapper { width: 100%; height: 4px; background: rgba(255,255,255,0.3); border-radius: 2px; margin-top: 10px; display: none; }
-        .progress-bar { width: 0%; height: 100%; background: white; border-radius: 2px; transition: width 0.2s; }
-        
-        /* Utility */
         .hidden { display: none !important; }
         .text-truncate { max-width: 180px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
     </style>
@@ -173,14 +96,11 @@
     </nav>
 
     <div class="container">
-        <!-- DASHBOARD BANNER -->
+        <!-- FACULTY BANNER -->
         <div id="facultyBanner" class="faculty-banner">
             <div>
                 <h2 style="font-size:1.2rem;">Welcome, <span id="facultyName">Prof</span></h2>
                 <p style="opacity:0.9; font-size:0.9rem;">Subject: <strong id="facultySubject"></strong></p>
-                <div class="progress-wrapper" id="progressWrapper">
-                    <div class="progress-bar" id="progressBar"></div>
-                </div>
             </div>
             <div class="upload-area">
                 <button class="btn" style="background: white; color: var(--primary);" onclick="document.getElementById('fileInput').click()">
@@ -190,7 +110,7 @@
             </div>
         </div>
 
-        <!-- SEARCH & HEADER -->
+        <!-- SEARCH -->
         <div class="header-area">
             <div>
                 <h1>Materials Library</h1>
@@ -204,7 +124,6 @@
 
         <!-- GRID -->
         <div class="grid" id="materialsGrid">
-            <!-- Injected by JS -->
             <p style="color:var(--text-sub)">Loading...</p>
         </div>
     </div>
@@ -228,49 +147,10 @@
         </div>
     </div>
 
-    <!-- MODAL: CHANGE PASSWORD -->
-    <div class="modal" id="pwdModal">
-        <div class="modal-content">
-            <h3 style="margin-bottom:1rem;">Update Password</h3>
-            <div class="input-group">
-                <label class="input-label">Old Password</label>
-                <input type="password" id="oldPass" class="input-field">
-            </div>
-            <div class="input-group">
-                <label class="input-label">New Password</label>
-                <input type="password" id="newPass" class="input-field">
-            </div>
-            <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
-                <button class="btn btn-outline" onclick="closeModal('pwdModal')">Cancel</button>
-                <button class="btn btn-primary" onclick="changePassword()">Update</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL: RENAME -->
-    <div class="modal" id="renameModal">
-        <div class="modal-content">
-            <h3 style="margin-bottom:1rem;">Rename File</h3>
-            <input type="hidden" id="renameOld">
-            <div class="input-group">
-                <label class="input-label">Current Name: <span id="renameLabel" style="color:var(--primary)"></span></label>
-            </div>
-            <div class="input-group">
-                <label class="input-label">New Name</label>
-                <input type="text" id="renameNew" class="input-field">
-                <small style="color:var(--ai); display:none;" id="renameError">Extension must match!</small>
-            </div>
-            <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
-                <button class="btn btn-outline" onclick="closeModal('renameModal')">Cancel</button>
-                <button class="btn btn-primary" onclick="confirmRename()">Save</button>
-            </div>
-        </div>
-    </div>
-
     <script>
+        // 👉 FIXED: Use relative path (works automatically on Railway)
         const API = '/api';
         
-        // Match these KEYS exactly with 'server.js'
         const subjects = {
             'Artificial_Intelligence': { name: 'Artificial Intelligence', color: 'var(--ai)' },
             'Operating_System': { name: 'Operating System', color: 'var(--os)' },
@@ -289,7 +169,6 @@
             fetchFiles();
         };
 
-        // --- THEME ---
         function initTheme() {
             const theme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', theme);
@@ -305,42 +184,41 @@
         }
 
         function updateThemeIcon(theme) {
-            const btn = document.getElementById('themeBtn');
-            btn.innerHTML = theme === 'light' ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
+            document.getElementById('themeBtn').innerHTML = theme === 'light' ? '<i class="fa-solid fa-moon"></i>' : '<i class="fa-solid fa-sun"></i>';
         }
 
-        // --- CORE ---
         async function fetchFiles() {
             try {
                 const res = await fetch(`${API}/files`);
+                if(!res.ok) throw new Error("Failed to fetch");
                 fileData = await res.json();
                 renderFiles();
-            } catch (e) { console.error(e); }
+            } catch (e) { 
+                console.error(e);
+                document.getElementById('materialsGrid').innerHTML = '<p>Library empty or loading...</p>';
+            }
         }
 
         function renderFiles() {
             const grid = document.getElementById('materialsGrid');
             const search = document.getElementById('searchInput').value.toLowerCase();
             grid.innerHTML = '';
-
             let hasFiles = false;
 
             Object.keys(subjects).forEach(key => {
                 const meta = subjects[key];
                 const files = fileData[key] || [];
-                
                 const filtered = files.filter(f => f.name.toLowerCase().includes(search));
                 const subjectMatch = meta.name.toLowerCase().includes(search);
                 
                 if (search && !subjectMatch && filtered.length === 0) return;
-
                 hasFiles = true;
+
                 const displayFiles = search ? filtered : files;
-                const isActive = search ? 'active' : ''; // Open cards if searching
+                const isActive = search ? 'active' : ''; 
 
                 const card = document.createElement('div');
                 card.className = `card ${isActive}`;
-                
                 card.innerHTML = `
                     <div class="card-header" onclick="this.parentElement.classList.toggle('active')">
                         <div class="card-title">
@@ -353,32 +231,27 @@
                         ${displayFiles.length ? displayFiles.map(f => `
                             <div class="file-item">
                                 <div class="file-info">
-                                    <div class="file-icon"><i class="fa-solid ${getIcon(f.type || f.name)}"></i></div>
+                                    <div style="font-size:1.2rem; color:var(--text-sub); width:30px;"><i class="fa-solid fa-file"></i></div>
                                     <div>
-                                        <a href="${API}/file/${key}/${encodeURIComponent(f.name)}?action=preview" target="_blank" class="file-name text-truncate" title="${f.name}">${f.name}</a>
-                                        <div class="file-meta">${f.size} • ${new Date(f.uploadedAt).toLocaleDateString()} • ⬇ ${f.downloads}</div>
+                                        <a href="${API}/file/${key}/${encodeURIComponent(f.name)}?action=preview" target="_blank" class="file-name text-truncate">${f.name}</a>
+                                        <div class="file-meta">${f.size} • ⬇ ${f.downloads}</div>
                                     </div>
                                 </div>
-                                <div class="action-btns">
-                                    <a href="${API}/file/${key}/${encodeURIComponent(f.name)}?action=preview" target="_blank" class="btn btn-outline" style="padding:5px 10px" title="Preview"><i class="fa-solid fa-eye"></i></a>
-                                    <a href="${API}/file/${key}/${encodeURIComponent(f.name)}" class="btn btn-outline" style="padding:5px 10px" title="Download"><i class="fa-solid fa-download"></i></a>
-                                    
+                                <div class="action-btns" style="display:flex; gap:5px;">
+                                    <a href="${API}/file/${key}/${encodeURIComponent(f.name)}" class="btn btn-outline" style="padding:5px 10px"><i class="fa-solid fa-download"></i></a>
                                     ${(currentUser && currentUser.subject === key) ? `
-                                        <button onclick="openRename('${f.name}')" class="btn btn-outline" style="padding:5px 10px"><i class="fa-solid fa-pen"></i></button>
                                         <button onclick="deleteFile('${key}', '${f.name}')" class="btn btn-danger" style="padding:5px 10px"><i class="fa-solid fa-trash"></i></button>
                                     ` : ''}
                                 </div>
                             </div>
-                        `).join('') : '<div style="padding:1rem; text-align:center; color:var(--text-sub); font-size:0.9rem;">No files uploaded.</div>'}
+                        `).join('') : '<div style="padding:1rem; text-align:center; color:var(--text-sub);">No files.</div>'}
                     </div>
                 `;
                 grid.appendChild(card);
             });
-
-            if(!hasFiles) grid.innerHTML = '<p style="text-align:center;width:100%;color:var(--text-sub)">No results.</p>';
+            if(!hasFiles) grid.innerHTML = '<p style="text-align:center;">No results found.</p>';
         }
 
-        // --- AUTH ---
         async function login() {
             const u = document.getElementById('loginUser').value;
             const p = document.getElementById('loginPass').value;
@@ -394,12 +267,11 @@
                     closeModal('loginModal');
                     updateAuthUI();
                     fetchFiles();
-                } else { alert(data.error); }
-            } catch(e) { alert('Login error'); }
+                } else alert(data.error);
+            } catch(e) { alert('Login failed'); }
         }
 
         function logout() {
-            if(currentUser) fetch(`${API}/logout`, { method:'POST', headers:{'x-auth-token':currentUser.token}});
             currentUser = null;
             localStorage.removeItem('userSession');
             location.reload();
@@ -408,12 +280,8 @@
         function updateAuthUI() {
             const navAuth = document.getElementById('authBtnArea');
             const banner = document.getElementById('facultyBanner');
-            
             if(currentUser) {
-                navAuth.innerHTML = `
-                    <button class="btn btn-outline" onclick="openModal('pwdModal')">Password</button>
-                    <button class="btn btn-danger" onclick="logout()">Logout</button>
-                `;
+                navAuth.innerHTML = `<button class="btn btn-danger" onclick="logout()">Logout</button>`;
                 banner.style.display = 'flex';
                 document.getElementById('facultyName').innerText = currentUser.username;
                 document.getElementById('facultySubject').innerText = subjects[currentUser.subject].name;
@@ -424,113 +292,37 @@
             }
         }
 
-        // --- UPLOAD (FIXED FOR "INVALID SUBJECT" ERROR) ---
         async function handleUpload(input) {
             const file = input.files[0];
             if(!file) return;
-
-            // 1. Check Duplicate
-            try {
-                const check = await fetch(`${API}/check-duplicate`, {
-                    method:'POST', 
-                    headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
-                    body:JSON.stringify({subject:currentUser.subject, filename:file.name})
-                });
-                const d = await check.json();
-                if(d.exists && !confirm('File exists. Overwrite?')) { input.value = ''; return; }
-            } catch(e) { console.log("Dup check failed"); }
-
-            // 2. Prepare Upload
             const formData = new FormData();
-            // CRITICAL: Append 'subject' BEFORE 'file'
-            formData.append('subject', currentUser.subject); 
+            formData.append('subject', currentUser.subject);
             formData.append('file', file);
-
-            const pBar = document.getElementById('progressBar');
-            const pWrap = document.getElementById('progressWrapper');
-            pWrap.style.display = 'block'; pBar.style.width = '30%';
 
             try {
                 const res = await fetch(`${API}/upload`, {
-                    method:'POST', 
-                    headers:{'x-auth-token':currentUser.token}, // No Content-Type for FormData!
-                    body:formData
+                    method:'POST', headers:{'x-auth-token':currentUser.token}, body:formData
                 });
-                const result = await res.json();
-                
-                if(res.ok) {
-                    pBar.style.width = '100%';
-                    setTimeout(() => { pWrap.style.display = 'none'; pBar.style.width = '0'; }, 800);
-                    fetchFiles();
-                    alert("Upload Successful!");
-                } else {
-                    alert("Upload Failed: " + result.error);
-                    pWrap.style.display = 'none';
-                }
-            } catch(e) { alert("Network Error"); pWrap.style.display = 'none'; }
+                if(res.ok) { alert("Success!"); fetchFiles(); }
+                else { const d = await res.json(); alert("Error: " + d.error); }
+            } catch(e) { alert("Upload failed"); }
             input.value = '';
         }
 
         async function deleteFile(sub, name) {
-            if(!confirm('Delete ' + name + '?')) return;
+            if(!confirm('Delete this file?')) return;
             try {
                 const res = await fetch(`${API}/file`, {
-                    method:'DELETE',
-                    headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
+                    method:'DELETE', headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
                     body:JSON.stringify({subject:sub, filename:name})
                 });
                 if(res.ok) fetchFiles();
-                else alert("Delete failed");
+                else alert("Failed to delete");
             } catch(e) { alert("Error"); }
         }
 
-        async function changePassword() {
-            const oldP = document.getElementById('oldPass').value;
-            const newP = document.getElementById('newPass').value;
-            if(!oldP || !newP) return alert('Fill fields');
-
-            const res = await fetch(`${API}/change-password`, {
-                method:'POST',
-                headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
-                body:JSON.stringify({oldPassword:oldP, newPassword:newP})
-            });
-            if(res.ok) { alert('Password Changed'); closeModal('pwdModal'); }
-            else { alert('Failed'); }
-        }
-
-        // --- UTILS ---
         function openModal(id) { document.getElementById(id).classList.add('open'); }
         function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-        function openRename(oldName) {
-            document.getElementById('renameOld').value = oldName;
-            document.getElementById('renameLabel').innerText = oldName;
-            document.getElementById('renameNew').value = oldName;
-            openModal('renameModal');
-        }
-        async function confirmRename() {
-            const oldN = document.getElementById('renameOld').value;
-            const newN = document.getElementById('renameNew').value;
-            // validation
-            if(oldN.split('.').pop() !== newN.split('.').pop()) return alert("Extension mismatch");
-            
-            const res = await fetch(`${API}/rename`, {
-                method:'POST',
-                headers:{'Content-Type':'application/json', 'x-auth-token':currentUser.token},
-                body:JSON.stringify({subject:currentUser.subject, oldName:oldN, newName:newN})
-            });
-            if(res.ok) { closeModal('renameModal'); fetchFiles(); }
-            else alert("Rename failed");
-        }
-
-        function getIcon(t) {
-            t = t.toLowerCase();
-            if(t.includes('pdf')) return 'fa-file-pdf';
-            if(t.includes('doc')) return 'fa-file-word';
-            if(t.includes('ppt')) return 'fa-file-powerpoint';
-            if(t.includes('jp') || t.includes('png')) return 'fa-file-image';
-            if(t.includes('zip')) return 'fa-file-zipper';
-            return 'fa-file';
-        }
     </script>
 </body>
 </html>
